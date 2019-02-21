@@ -29,7 +29,7 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Give one or more search terms as parameters.")
 		os.Exit(1)
 	}
-	scrape := get_search_results(strings.Join(os.Args[1:], "%20"))
+	scrape := get_search_results(strings.Join(os.Args[1:], "%%20"))
 	selection := get_selection_from_user(scrape)
 	url := scrape.Results[selection-1].Video.Url
 	play_audio(url)
