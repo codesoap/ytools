@@ -1,75 +1,71 @@
 package main
 
 import (
-	"encoding/json"
+	"bufio"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"os"
 	"os/exec"
-	"strings"
+	"path/filepath"
+	"strconv"
 )
 
-const result_cnt = 16
-
-var api_url = "http://youtube-scrape.herokuapp.com/api/search?q=%s&page=1"
-
-type Scrape struct {
-	Results []struct {
-		Video struct {
-			Title string
-			Url   string
-		}
-	}
-}
+var usage string = `Usage:
+  ytools-audio VIDEO_NUMBER
+`
 
 func main() {
-	// TODO: If stdin is given: use it as search terms
-	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "Give one or more search terms as parameters.")
+	if len(os.Args) != 2 {
+		fmt.Fprintln(os.Stderr, usage)
 		os.Exit(1)
 	}
-	scrape := get_search_results(strings.Join(os.Args[1:], "%%20"))
-	selection := get_selection_from_user(scrape)
-	url := scrape.Results[selection-1].Video.Url
-	play_audio(url)
-}
-
-func get_search_results(search string) Scrape {
-	url := fmt.Sprintf(api_url, search)
-	resp, err := http.Get(url)
+	search_results, err := get_search_results()
 	if err != nil {
-		panic(err)
+		os.Exit(1)
 	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	selection, err := strconv.Atoi(os.Args[1])
 	if err != nil {
-		panic(err)
+		fmt.Fprintln(os.Stderr, usage)
+		os.Exit(1)
 	}
-
-	var scrape Scrape
-	json.Unmarshal(body, &scrape)
-
-	return scrape
-}
-
-func get_selection_from_user(scrape Scrape) int {
-	for i, result := range scrape.Results {
-		if i >= result_cnt {
-			break
-		}
-		fmt.Printf("%2d: %s\n", i+1, result.Video.Title)
-	}
-	var selection int
-	fmt.Print("Selection: ")
-	if _, err := fmt.Scanf("%d", &selection); err != nil {
-		panic(err)
-	}
-	if selection < 1 || selection > result_cnt || selection > len(scrape.Results) {
+	if selection < 1 || selection > len(search_results) {
 		fmt.Fprintln(os.Stderr, "Selection out of range.")
 		os.Exit(1)
 	}
-	return selection
+	// TODO: Save selected url as last_palyed
+	play_audio(search_results[selection-1])
+}
+
+func get_search_results() (search_results []string, err error) {
+	// TODO: Use constant from utils here for cap:
+	search_results = make([]string, 0)
+
+	data_dir := get_data_dir()
+	urls_file := filepath.Join(data_dir, "search_results")
+	file, err := os.Open(urls_file)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not read '%s'.", urls_file)
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		search_results = append(search_results, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		panic(err)
+	}
+
+	return
+}
+
+func get_data_dir() string {
+	data_dir := os.Getenv("XDG_DATA_HOME")
+	if data_dir == "" {
+		data_dir = filepath.Join(os.Getenv("HOME"), ".local/share/ytools/")
+	}
+	return data_dir
 }
 
 func play_audio(url string) {
