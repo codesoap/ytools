@@ -10,7 +10,7 @@ import (
 )
 
 var usage string = `Usage:
-  ytools-audio VIDEO_NUMBER
+  ytools-audio SEARCH_RESULT_NUMBER
 `
 
 func main() {
@@ -31,12 +31,12 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Selection out of range.")
 		os.Exit(1)
 	}
-	// TODO: Save selected url as last_palyed
-	play_audio(search_results[selection-1])
+	url := search_results[selection-1]
+	save_as_last_played(url)
+	play_audio(url)
 }
 
 func get_search_results() (search_results []string, err error) {
-	// TODO: Use constant from utils here for cap:
 	search_results = make([]string, 0)
 
 	data_dir := get_data_dir()
@@ -60,12 +60,27 @@ func get_search_results() (search_results []string, err error) {
 	return
 }
 
-func get_data_dir() string {
-	data_dir := os.Getenv("XDG_DATA_HOME")
-	if data_dir == "" {
-		data_dir = filepath.Join(os.Getenv("HOME"), ".local/share/ytools/")
+func save_as_last_played(url string) (err error) {
+	data_dir := get_data_dir()
+	err = os.MkdirAll(data_dir, 0755)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Failed to create directory '%s'.", data_dir)
+		return
 	}
-	return data_dir
+	last_played_filename := filepath.Join(data_dir, "last_played")
+	last_played_file, err := os.Create(last_played_filename)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Could not create last_played file.")
+		return
+	}
+	defer func() {
+		err = last_played_file.Close()
+	}()
+	_, err = fmt.Fprintln(last_played_file, url)
+	if err != nil {
+		return
+	}
+	return
 }
 
 func play_audio(url string) {
@@ -84,4 +99,12 @@ func play_audio(url string) {
 			panic(err)
 		}
 	}()
+}
+
+func get_data_dir() string {
+	data_dir := os.Getenv("XDG_DATA_HOME")
+	if data_dir == "" {
+		data_dir = filepath.Join(os.Getenv("HOME"), ".local/share/ytools/")
+	}
+	return data_dir
 }
