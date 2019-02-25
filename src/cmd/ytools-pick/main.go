@@ -4,13 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strconv"
 )
 
-var usage string = `Usage:
-  ytools-audio SEARCH_RESULT_NUMBER
+var usage string = `Print the URL of one search result and save it as picked
+
+
+Usage:
+  ytools-pick SEARCH_RESULT_NUMBER
 `
 
 func main() {
@@ -32,8 +34,8 @@ func main() {
 		os.Exit(1)
 	}
 	url := search_results[selection-1]
-	save_as_last_played(url)
-	play_audio(url)
+	save_as_last_picked(url)
+	fmt.Println(url)
 }
 
 func get_search_results() (search_results []string, err error) {
@@ -60,45 +62,27 @@ func get_search_results() (search_results []string, err error) {
 	return
 }
 
-func save_as_last_played(url string) (err error) {
+func save_as_last_picked(url string) (err error) {
 	data_dir := get_data_dir()
 	err = os.MkdirAll(data_dir, 0755)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to create directory '%s'.", data_dir)
 		return
 	}
-	last_played_filename := filepath.Join(data_dir, "last_played")
-	last_played_file, err := os.Create(last_played_filename)
+	last_picked_filename := filepath.Join(data_dir, "last_picked")
+	last_picked_file, err := os.Create(last_picked_filename)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Could not create last_played file.")
+		fmt.Fprintln(os.Stderr, "Could not create last_picked file.")
 		return
 	}
 	defer func() {
-		err = last_played_file.Close()
+		err = last_picked_file.Close()
 	}()
-	_, err = fmt.Fprintln(last_played_file, url)
+	_, err = fmt.Fprintln(last_picked_file, url)
 	if err != nil {
 		return
 	}
 	return
-}
-
-func play_audio(url string) {
-	cmd := exec.Command("mpv",
-		"--ytdl-format", "bestaudio/best",
-		"--no-video",
-		url)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-	if err := cmd.Start(); err != nil {
-		panic(err)
-	}
-	defer func() {
-		if err := cmd.Wait(); err != nil {
-			panic(err)
-		}
-	}()
 }
 
 func get_data_dir() string {
