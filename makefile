@@ -1,8 +1,12 @@
-.PHONY: all clean
+.PHONY: all install clean
 
 ROOT = github.com/codesoap/ytools
 
 all: bin/ytools-pick bin/ytools-search
+
+install: all
+	cp "bin/ytools-pick" "${HOME}/bin"
+	cp "bin/ytools-search" "${HOME}/bin"
 
 clean:
 	rm -rf bin
