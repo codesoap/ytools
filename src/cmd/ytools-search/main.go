@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/net/html"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -17,8 +18,8 @@ type Video struct {
 }
 
 func main() {
-	url := get_search_url()
-	videos := scrape_off_videos(url)
+	search_url := get_search_url()
+	videos := scrape_off_videos(search_url)
 	if len(videos) == 0 {
 		fmt.Fprintf(os.Stderr, "No videos found.\n")
 		os.Exit(1)
@@ -35,14 +36,16 @@ func get_search_url() string {
 		fmt.Fprintf(os.Stderr, "Give one or more search terms as parameters.\n")
 		os.Exit(1)
 	}
-	return fmt.Sprintf("https://www.youtube.com/results?search_query=%s",
-		strings.Join(os.Args[1:], "%20"))
+	search_string := url.PathEscape(strings.Join(os.Args[1:], " "))
+	return fmt.Sprintf(
+		"https://www.youtube.com/results?search_query=%s",
+		search_string)
 }
 
-func scrape_off_videos(url string) (videos []Video) {
+func scrape_off_videos(search_url string) (videos []Video) {
 	videos = make([]Video, 0, max_results)
 
-	resp, err := http.Get(url)
+	resp, err := http.Get(search_url)
 	if err != nil {
 		panic(err)
 	}
