@@ -24,7 +24,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "No videos found.\n")
 		os.Exit(1)
 	}
-	if err := write_urls_to_tempfile(videos); err != nil {
+	if err := save_urls(videos); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed saving found URLs.\n")
 		os.Exit(1)
 	}
@@ -72,7 +72,7 @@ func scrape_off_videos(search_url string) (videos []Video) {
 	return
 }
 
-func write_urls_to_tempfile(videos []Video) (err error) {
+func save_urls(videos []Video) (err error) {
 	data_dir := get_data_dir()
 	err = os.MkdirAll(data_dir, 0755)
 	if err != nil {
