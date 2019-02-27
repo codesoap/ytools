@@ -8,16 +8,10 @@ import (
 	"strconv"
 )
 
-var usage string = `Print the URL of one search result and save it as picked
-
-
-Usage:
-  ytools-pick SEARCH_RESULT_NUMBER
-`
-
 func main() {
 	if len(os.Args) != 2 {
-		fmt.Fprintln(os.Stderr, usage)
+		fmt.Fprintln(os.Stderr,
+			"Please give the search result number as an argument.")
 		os.Exit(1)
 	}
 	search_results, err := get_search_results()
@@ -26,7 +20,7 @@ func main() {
 	}
 	selection, err := strconv.Atoi(os.Args[1])
 	if err != nil {
-		fmt.Fprintln(os.Stderr, usage)
+		fmt.Fprintln(os.Stderr, "The given argument is no integer.")
 		os.Exit(1)
 	}
 	if selection < 1 || selection > len(search_results) {
