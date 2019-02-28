@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/codesoap/ytools/src/ytools"
 	"golang.org/x/net/html"
 	"net/http"
 	"net/url"
@@ -73,10 +74,8 @@ func scrape_off_videos(search_url string) (videos []Video) {
 }
 
 func save_urls(videos []Video) (err error) {
-	data_dir := get_data_dir()
-	err = os.MkdirAll(data_dir, 0755)
+	data_dir, err := ytools.GetDataDir()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Failed to create directory '%s'.", data_dir)
 		return
 	}
 	urls_filename := filepath.Join(data_dir, "search_results")
@@ -95,14 +94,6 @@ func save_urls(videos []Video) (err error) {
 		}
 	}
 	return
-}
-
-func get_data_dir() string {
-	data_dir := os.Getenv("XDG_DATA_HOME")
-	if data_dir == "" {
-		data_dir = filepath.Join(os.Getenv("HOME"), ".local/share/ytools/")
-	}
-	return data_dir
 }
 
 func print_video_titles(videos []Video) {
