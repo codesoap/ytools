@@ -14,20 +14,15 @@ func main() {
 			"Please give the search result number as an argument.")
 		os.Exit(1)
 	}
-	search_results, err := ytools.GetSearchResults()
-	if err != nil {
-		os.Exit(1)
-	}
 	selection, err := strconv.Atoi(os.Args[1])
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "The given argument is no integer.")
 		os.Exit(1)
 	}
-	if selection < 1 || selection > len(search_results) {
-		fmt.Fprintln(os.Stderr, "Selection out of range.")
+	url, err := ytools.GetSearchResult(selection - 1)
+	if err != nil {
 		os.Exit(1)
 	}
-	url := search_results[selection-1]
 	save_as_last_picked(url)
 	fmt.Println(url)
 }

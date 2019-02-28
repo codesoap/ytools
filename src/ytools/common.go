@@ -3,11 +3,26 @@ package ytools
 import (
 	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
-func GetSearchResults() (search_results []string, err error) {
+func GetSearchResult(i int) (search_result string, err error) {
+	search_results, err := get_search_results()
+	if err == nil {
+		if i < 0 || i >= len(search_results) {
+			fmt.Fprintln(os.Stderr, "Search result index out of range.")
+			err = fmt.Errorf("invalid search result index")
+		} else {
+			search_result = search_results[i]
+		}
+	}
+	return
+}
+
+func get_search_results() (search_results []string, err error) {
 	search_results = make([]string, 0)
 
 	data_dir, err := GetDataDir()
