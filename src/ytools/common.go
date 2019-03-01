@@ -6,8 +6,27 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
+
+func GetDesiredVideoUrl() (video_url string, err error) {
+	switch len(os.Args) {
+	case 1:
+		video_url, err = GetLastPickedUrl()
+	case 2:
+		selection, err := strconv.Atoi(os.Args[1])
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "The given argument is no integer.")
+		}
+		video_url, err = GetSearchResult(selection - 1)
+	default:
+		fmt.Fprintf(os.Stderr, "Give a video number as argument, or no "+
+			"argument to select the last picked.\n")
+		err = fmt.Errorf("invalid argument count")
+	}
+	return
+}
 
 func GetSearchResult(i int) (search_result string, err error) {
 	search_results, err := get_search_results()
@@ -46,6 +65,21 @@ func get_search_results() (search_results []string, err error) {
 		panic(err)
 	}
 
+	return
+}
+
+func GetLastPickedUrl() (last_picked_url string, err error) {
+	data_dir, err := GetDataDir()
+	if err != nil {
+		return
+	}
+	last_picked_filename := filepath.Join(data_dir, "last_picked")
+	file_content, err := ioutil.ReadFile(last_picked_filename)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not read '%s'.", last_picked_filename)
+		return
+	}
+	last_picked_url = strings.TrimSpace(string(file_content))
 	return
 }
 
