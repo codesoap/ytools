@@ -59,7 +59,7 @@ func scrape_off_info(url string) (info Info, err error) {
 		case html.ErrorToken:
 			return
 		case html.StartTagToken:
-			err = fill_in_info_if_available(tokenizer, &info)
+			err = fill_in_available_info(tokenizer, &info)
 			if err != nil {
 				return
 			}
@@ -71,7 +71,7 @@ func scrape_off_info(url string) (info Info, err error) {
 	return
 }
 
-func fill_in_info_if_available(tokenizer *html.Tokenizer, info *Info) (err error) {
+func fill_in_available_info(tokenizer *html.Tokenizer, info *Info) (err error) {
 	ok := true
 	token := tokenizer.Token()
 	switch {
@@ -152,21 +152,17 @@ func is_description(token html.Token) bool {
 	return false
 }
 
-func extract_description(tokenizer *html.Tokenizer) (description string, ok bool) {
-	description_slice := make([]byte, 100)
+func extract_description(tokenizer *html.Tokenizer) (desc string, ok bool) {
+	description := make([]byte, 100)
 	for {
 		switch tokenizer.Next() {
 		case html.ErrorToken:
 			return
 		case html.TextToken:
-			ok = true
-			raw_text := tokenizer.Text()
-			tmp_text := make([]byte, len(raw_text))
-			copy(tmp_text, raw_text)
-			description_slice = append(description_slice, tmp_text...)
+			description = append(description, tokenizer.Text()...)
 		case html.SelfClosingTagToken:
 			if tokenizer.Token().Data == "br" {
-				description_slice = append(description_slice, '\n')
+				description = append(description, '\n')
 			}
 		case html.StartTagToken:
 			if tokenizer.Token().Data == "a" {
@@ -175,17 +171,14 @@ func extract_description(tokenizer *html.Tokenizer) (description string, ok bool
 				if !ok {
 					return
 				}
-				description_slice = append(description_slice, []byte(next_text)...)
+				description = append(description, []byte(next_text)...)
 			}
 		case html.EndTagToken:
 			if tokenizer.Token().Data == "p" {
-				ok = true
-				description = string(description_slice)
-				return
+				return string(description), true
 			}
 		}
 	}
-	return
 }
 
 func extract_next_text(tokenizer *html.Tokenizer) (text string, ok bool) {
@@ -194,12 +187,10 @@ func extract_next_text(tokenizer *html.Tokenizer) (text string, ok bool) {
 		case html.ErrorToken:
 			return
 		case html.TextToken:
-			ok = true
 			raw_text := tokenizer.Text()
 			tmp_text := make([]byte, len(raw_text))
 			copy(tmp_text, raw_text)
-			text = strings.TrimSpace(string(tmp_text))
-			return
+			return strings.TrimSpace(string(tmp_text)), true
 		}
 	}
 }
