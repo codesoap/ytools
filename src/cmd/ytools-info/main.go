@@ -11,7 +11,6 @@ import (
 
 type Info struct {
 	Title string
-	Url   string
 	Views string
 	// TODO: Length string
 	// The length is not available on the main page, will probably have
@@ -38,15 +37,12 @@ func main() {
 
 func print_info(info Info) {
 	fmt.Println(info.Title)
-	fmt.Println(info.Url)
 	fmt.Printf("%s  ▲ %s  ▼ %s  %s\n\n", info.Views, info.Likes, info.Dislikes,
 		info.Date)
 	fmt.Println(info.Description)
 }
 
 func scrape_off_info(url string) (info Info, err error) {
-	info.Url = url
-
 	resp, err := http.Get(url)
 	if err != nil {
 		return
@@ -197,7 +193,6 @@ func extract_next_text(tokenizer *html.Tokenizer) (text string, ok bool) {
 
 func info_complete(info Info) bool {
 	return info.Title != "" &&
-		info.Url != "" &&
 		info.Views != "" &&
 		info.Likes != "" &&
 		info.Dislikes != "" &&
