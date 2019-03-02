@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -28,7 +27,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "No videos found.\n")
 		os.Exit(1)
 	}
-	if err := save_urls(videos); err != nil {
+	if err := save_videos_urls(videos); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed saving found URLs.\n")
 		os.Exit(1)
 	}
@@ -77,27 +76,12 @@ func scrape_off_videos(search_url string) (videos []Video, err error) {
 	return
 }
 
-func save_urls(videos []Video) (err error) {
-	data_dir, err := ytools.GetDataDir()
-	if err != nil {
-		return
-	}
-	urls_filename := filepath.Join(data_dir, "search_results")
-	urls_file, err := os.Create(urls_filename)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Could not create URLs file.")
-		return
-	}
-	defer func() {
-		err = urls_file.Close()
-	}()
+func save_videos_urls(videos []Video) (err error) {
+	videos_urls := make([]string, 0, max_results)
 	for _, video := range videos {
-		_, err := fmt.Fprintf(urls_file, "https://www.youtube.com%s\n", video.Url)
-		if err != nil {
-			return err
-		}
+		videos_urls = append(videos_urls, video.Url)
 	}
-	return
+	return ytools.SaveUrls(videos_urls)
 }
 
 func print_video_titles(videos []Video) {
@@ -147,7 +131,7 @@ func extract_video_from_title_link(token html.Token) (video Video, ok bool) {
 			video.Title = a.Val
 		}
 		if a.Key == "href" {
-			video.Url = a.Val
+			video.Url = fmt.Sprintf("https://www.youtube.com%s", a.Val)
 		}
 	}
 	if video.Title != "" && video.Url != "" {

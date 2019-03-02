@@ -10,6 +10,30 @@ import (
 	"strings"
 )
 
+func SaveUrls(urls []string) (err error) {
+	data_dir, err := GetDataDir()
+	if err != nil {
+		return
+	}
+	urls_filename := filepath.Join(data_dir, "search_results")
+	urls_file, err := os.Create(urls_filename)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Could not create URLs file.")
+		return
+	}
+	defer func() {
+		// FIXME: This overwrites previous errors
+		err = urls_file.Close()
+	}()
+	for _, url := range urls {
+		_, err = fmt.Fprintln(urls_file, url)
+		if err != nil {
+			return
+		}
+	}
+	return
+}
+
 func GetDesiredVideoUrl() (video_url string, err error) {
 	switch len(os.Args) {
 	case 1:
