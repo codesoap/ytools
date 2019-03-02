@@ -20,7 +20,10 @@ type Video struct {
 
 func main() {
 	search_url := get_search_url()
-	videos := scrape_off_videos(search_url)
+	videos, err := scrape_off_videos(search_url)
+	if err != nil {
+		os.Exit(1)
+	}
 	if len(videos) == 0 {
 		fmt.Fprintf(os.Stderr, "No videos found.\n")
 		os.Exit(1)
@@ -43,12 +46,13 @@ func get_search_url() string {
 		search_string)
 }
 
-func scrape_off_videos(search_url string) (videos []Video) {
+func scrape_off_videos(search_url string) (videos []Video, err error) {
 	videos = make([]Video, 0, max_results)
 
 	resp, err := http.Get(search_url)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Could not get '%s'\n", search_url)
+		return
 	}
 	defer resp.Body.Close()
 
