@@ -5,21 +5,10 @@ import (
 	"github.com/codesoap/ytools/src/ytools"
 	"os"
 	"path/filepath"
-	"strconv"
 )
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Fprintln(os.Stderr,
-			"Please give the search result number as an argument.")
-		os.Exit(1)
-	}
-	selection, err := strconv.Atoi(os.Args[1])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "The given argument is no integer.")
-		os.Exit(1)
-	}
-	url, err := ytools.GetSearchResult(selection - 1)
+	url, err := ytools.GetDesiredVideoUrl()
 	if err != nil {
 		os.Exit(1)
 	}
