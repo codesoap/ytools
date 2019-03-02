@@ -22,14 +22,14 @@ func SaveUrls(urls []string) (err error) {
 		return
 	}
 	defer func() {
-		// FIXME: This overwrites previous errors
-		err = urls_file.Close()
+		if err != nil {
+			urls_file.Close()
+		} else {
+			err = urls_file.Close()
+		}
 	}()
 	for _, url := range urls {
 		_, err = fmt.Fprintln(urls_file, url)
-		if err != nil {
-			return
-		}
 	}
 	return
 }
