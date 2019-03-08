@@ -61,8 +61,9 @@ func scrape_off_videos(search_url string) (videos []Video, err error) {
 		if tokenizer_status == html.ErrorToken {
 			break
 		} else if tokenizer_status == html.StartTagToken {
-			if is_result(tokenizer.Token()) {
-				video, ok := extract_video(tokenizer)
+			token := tokenizer.Token()
+			if is_title_link(token) {
+				video, ok := extract_video_from_title_link(token)
 				if !ok {
 					break
 				}
@@ -87,30 +88,6 @@ func save_videos_urls(videos []Video) (err error) {
 func print_video_titles(videos []Video) {
 	for i, video := range videos {
 		fmt.Printf("%2d: %s\n", i+1, video.Title)
-	}
-}
-
-func is_result(token html.Token) bool {
-	for _, a := range token.Attr {
-		if a.Key == "class" && strings.Contains(a.Val, "yt-lockup-video") {
-			return true
-		}
-	}
-	return false
-}
-
-func extract_video(tokenizer *html.Tokenizer) (video Video, ok bool) {
-	for {
-		tokenizer_status := tokenizer.Next()
-		if tokenizer_status == html.ErrorToken {
-			return
-		} else if tokenizer_status == html.StartTagToken {
-			token := tokenizer.Token()
-			if is_title_link(token) {
-				video, ok = extract_video_from_title_link(token)
-				return
-			}
-		}
 	}
 }
 
