@@ -149,7 +149,7 @@ func is_description(token html.Token) bool {
 }
 
 func extract_description(tokenizer *html.Tokenizer) (desc string, ok bool) {
-	description := make([]byte, 100)
+	description := make([]byte, 0, 100)
 	for {
 		switch tokenizer.Next() {
 		case html.ErrorToken:
