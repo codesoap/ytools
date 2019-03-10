@@ -30,7 +30,3 @@ $ ytools-recommend
  3: Glass Animals - Season 2 Episode 3 (Official Video)
 ...
 ```
-
-# Todo
-- `ytools-info` for displaying title, views, likes, description, ...
-- `ytools-recommend` to list recommended videos for a search result
