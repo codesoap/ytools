@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"github.com/codesoap/ytools/src/ytools"
 	"golang.org/x/net/html"
+	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
-	"io"
-	"io/ioutil"
 )
 
 const max_results = 4
+
 var api_base string = "https://www.youtube.com/comment_service_ajax?action_get_comments=1&ctoken=%s"
 
 type CommentsJson struct {
@@ -46,12 +47,12 @@ func get_comments_html(video_url string) (comments_html string, err error) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not get the comments\n")
 		return
-	} 
+	}
 	json_bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not read body of the comments response\n")
 		return
-	} 
+	}
 	var comments_json CommentsJson
 	err = json.Unmarshal(json_bytes, &comments_json)
 	if err != nil {
