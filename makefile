@@ -2,13 +2,14 @@
 
 ROOT = github.com/codesoap/ytools
 
-all: bin/ytools-search bin/ytools-pick bin/ytools-info bin/ytools-recommend
+all: bin/ytools-search bin/ytools-pick bin/ytools-info bin/ytools-recommend bin/ytools-comments
 
 install: all
 	cp "bin/ytools-search" "${HOME}/bin"
 	cp "bin/ytools-pick" "${HOME}/bin"
 	cp "bin/ytools-info" "${HOME}/bin"
 	cp "bin/ytools-recommend" "${HOME}/bin"
+	cp "bin/ytools-comments" "${HOME}/bin"
 
 clean:
 	rm -rf bin
@@ -24,3 +25,6 @@ bin/ytools-info: src/cmd/ytools-info/main.go src/ytools/common.go
 
 bin/ytools-recommend: src/cmd/ytools-recommend/main.go src/ytools/common.go
 	go build -o bin/ytools-recommend ${ROOT}/src/cmd/ytools-recommend
+
+bin/ytools-comments: src/cmd/ytools-comments/main.go src/ytools/common.go
+	go build -o bin/ytools-comments ${ROOT}/src/cmd/ytools-comments
