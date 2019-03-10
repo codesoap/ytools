@@ -69,7 +69,11 @@ func extract_comments(comments_html string) (comments []string, ok bool) {
 	for {
 		switch tokenizer.Next() {
 		case html.ErrorToken:
-			return nil, false
+			if tokenizer.Err() == io.EOF {
+				return
+			} else {
+				return nil, false
+			}
 		case html.StartTagToken:
 			if is_comment(tokenizer.Token()) {
 				comment, ok = extract_comment(tokenizer)
