@@ -6,17 +6,28 @@ $ ytools-search Black Mambo
  1: Glass Animals - Black Mambo (Lyric Video)
  2: Glass Animals - Black Mambo
  3: Madrugada-Black Mambo
- 4: The Black Mamba - Believe (Official Music Video)
- 5: Madrugada - Black Mambo [Official Music Video] [2001]
- 6: Black Mambo & Ácido Pantera  - Efecto Manglar (Official Video)
- 7: Glass Animals - Hazey
- 8: Black Mambo
- 9: Black Mambo - Ritual (Official Music Video)
-10: Glass Animals - Black Mambo (Live From Capitol Studios)
-11: The Black Mamba & Aurea - Wonder Why (Lyric Video)
-12: The Black Mamba - It Ain't You (Official Video)
+...
+$ ytools-info 2
+Glass Animals - Black Mambo
+14.643.046 Aufrufe  ▲ 81.526  ▼ 1.626  Am 17.02.2015 veröffentlicht
+
+Our new record “How To Be a Human Being” featuring “Youth” and “Life Itself is out now. Buy it and stream it and watch it and take it on a date now: http://po.st/HTBAHBiTunesYT / Listen on Spotify: http://po.st/ListenGlassAnimalsYT / Order from our store: http://po.st/HTBAHBStoreYT
+...
 $ mpv $(ytools-pick 2)
 Playing: https://www.youtube.com/watch?v=H7bqZIpC3Pg
+...
+$ # Without an argument the comments of the last picked video are shown:
+$ ytools-comments
+=== Comment #1: ===
+If you're here then you have good taste in music... ;)
+
+=== Comment #2: ===
+Atyphical
+...
+$ ytools-recommend
+ 1: Glass Animals - Cane Shuga
+ 2: Black Coast - TRNDSTTR (Lucian Remix)
+ 3: Glass Animals - Season 2 Episode 3 (Official Video)
 ...
 ```
 
