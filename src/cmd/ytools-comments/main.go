@@ -41,6 +41,7 @@ func main() {
 func get_comments_html(video_url string) (comments_html string, err error) {
 	comments_req, err := get_comments_request(video_url)
 	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
 		return
 	}
 	client := &http.Client{}
@@ -144,8 +145,14 @@ func get_comments_request(video_url string) (req *http.Request, err error) {
 	}
 	video_html := string(buf)
 
-	req_url := extract_request_url(video_html)
-	req_body_reader := get_request_body_reader(video_html)
+	req_url, ok := extract_request_url(video_html)
+	if !ok {
+		return nil, fmt.Errorf("Could not extract comments URL")
+	}
+	req_body_reader, ok := get_request_body_reader(video_html)
+	if !ok {
+		return nil, fmt.Errorf("Could not extract session token")
+	}
 	req, err = http.NewRequest("POST", req_url, req_body_reader)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Could not create request for the comments\n")
@@ -159,20 +166,23 @@ func get_comments_request(video_url string) (req *http.Request, err error) {
 	return
 }
 
-func extract_request_url(text string) string {
-	ctoken := extract_string_after_key(text, "COMMENTS_TOKEN")
-	return fmt.Sprintf(comments_url_base, ctoken)
+func extract_request_url(text string) (url string, ok bool) {
+	ctoken, ok := extract_string_after_key(text, "COMMENTS_TOKEN")
+	return fmt.Sprintf(comments_url_base, ctoken), ok
 }
 
-func get_request_body_reader(text string) io.Reader {
-	xsrf_token := extract_string_after_key(text, "XSRF_TOKEN")
+func get_request_body_reader(text string) (reader io.Reader, ok bool) {
+	xsrf_token, ok := extract_string_after_key(text, "XSRF_TOKEN")
 	body := fmt.Sprintf("session_token=%s", xsrf_token)
-	return strings.NewReader(body)
+	return strings.NewReader(body), ok
 }
 
-func extract_string_after_key(text string, key string) string {
+func extract_string_after_key(text string, key string) (s string, ok bool) {
 	i_key := strings.Index(text, key)
+	if i_key < 0 {
+		return
+	}
 	i_start := strings.IndexByte(text[i_key:], '"') + 1 + i_key
 	i_end := strings.IndexByte(text[i_start:], '"') + i_start
-	return text[i_start:i_end]
+	return text[i_start:i_end], true
 }
