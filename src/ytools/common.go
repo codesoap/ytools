@@ -108,10 +108,11 @@ func GetLastPickedUrl() (last_picked_url string, err error) {
 }
 
 func GetDataDir() (data_dir string, err error) {
-	data_dir = os.Getenv("XDG_DATA_HOME")
+	data_dir_base := os.Getenv("XDG_DATA_HOME")
 	if data_dir == "" {
-		data_dir = filepath.Join(os.Getenv("HOME"), ".local/share/ytools/")
+		data_dir_base = filepath.Join(os.Getenv("HOME"), ".local/share/")
 	}
+	data_dir = filepath.Join(data_dir_base, "ytools/")
 	err = os.MkdirAll(data_dir, 0755)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to create directory '%s'.", data_dir)
