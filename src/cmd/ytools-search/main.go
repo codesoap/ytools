@@ -57,24 +57,23 @@ func scrape_off_videos(search_url string) (videos []Video, err error) {
 
 	tokenizer := html.NewTokenizer(resp.Body)
 	for {
-		tokenizer_status := tokenizer.Next()
-		if tokenizer_status == html.ErrorToken {
-			break
-		} else if tokenizer_status == html.StartTagToken {
+		switch tokenizer.Next() {
+		case html.ErrorToken:
+			return
+		case html.StartTagToken:
 			token := tokenizer.Token()
 			if is_title_link(token) {
 				video, ok := extract_video_from_title_link(token)
 				if !ok {
-					break
+					return
 				}
 				videos = append(videos, video)
 				if len(videos) == max_results {
-					break
+					return
 				}
 			}
 		}
 	}
-	return
 }
 
 func save_videos_urls(videos []Video) (err error) {
