@@ -14,7 +14,8 @@ import (
 
 const max_results = 4
 
-var api_base string = "https://www.youtube.com/comment_service_ajax?action_get_comments=1&ctoken=%s"
+var comments_url_base string = "https://www.youtube.com/" +
+	"comment_service_ajax?action_get_comments=1&ctoken=%s"
 
 type CommentsJson struct {
 	Content_html string
@@ -160,7 +161,7 @@ func get_comments_request(video_url string) (req *http.Request, err error) {
 
 func extract_request_url(text string) string {
 	ctoken := extract_string_after_key(text, "COMMENTS_TOKEN")
-	return fmt.Sprintf(api_base, ctoken)
+	return fmt.Sprintf(comments_url_base, ctoken)
 }
 
 func get_request_body_reader(text string) io.Reader {
