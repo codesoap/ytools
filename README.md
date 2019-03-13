@@ -41,3 +41,5 @@ started is go.
 4. `go get ./...` to install dependencies (`golang.org/x/net/html`)
 5. `make all` will build all binaries, you will find them in `bin/`
 6. `make install` to install the binaries to `/usr/local/`
+
+To uninstall ytools call `make uninstall`.

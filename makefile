@@ -1,4 +1,4 @@
-.PHONY: all install clean
+.PHONY: all install uninstall clean
 
 PREFIX = /usr/local
 
@@ -13,6 +13,13 @@ install: all
 	install -m 755 "bin/ytools-info" "${DESTDIR}${PREFIX}/bin"
 	install -m 755 "bin/ytools-recommend" "${DESTDIR}${PREFIX}/bin"
 	install -m 755 "bin/ytools-comments" "${DESTDIR}${PREFIX}/bin"
+
+uninstall:
+	rm -f "${DESTDIR}${PREFIX}/bin/ytools-search" \
+		"${DESTDIR}${PREFIX}/bin/ytools-pick" \
+		"${DESTDIR}${PREFIX}/bin/ytools-info" \
+		"${DESTDIR}${PREFIX}/bin/ytools-recommend" \
+		"${DESTDIR}${PREFIX}/bin/ytools-comments"
 
 clean:
 	rm -rf bin
