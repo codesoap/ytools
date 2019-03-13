@@ -40,4 +40,4 @@ started is go.
 3. `git clone https://github.com/codesoap/ytools.git && cd ytools/`
 4. `go get ./...` to install dependencies (`golang.org/x/net/html`)
 5. `make all` will build all binaries, you will find them in `bin/`
-6. `make install` will copy the binaries to `$HOME/bin/`
+6. `make install` to install the binaries to `/usr/local/`

@@ -1,15 +1,18 @@
 .PHONY: all install clean
 
+PREFIX = /usr/local
+
 ROOT = github.com/codesoap/ytools
 
 all: bin/ytools-search bin/ytools-pick bin/ytools-info bin/ytools-recommend bin/ytools-comments
 
 install: all
-	cp "bin/ytools-search" "${HOME}/bin"
-	cp "bin/ytools-pick" "${HOME}/bin"
-	cp "bin/ytools-info" "${HOME}/bin"
-	cp "bin/ytools-recommend" "${HOME}/bin"
-	cp "bin/ytools-comments" "${HOME}/bin"
+	mkdir -p "${DESTDIR}${PREFIX}/bin"
+	install -m 755 "bin/ytools-search" "${DESTDIR}${PREFIX}/bin"
+	install -m 755 "bin/ytools-pick" "${DESTDIR}${PREFIX}/bin"
+	install -m 755 "bin/ytools-info" "${DESTDIR}${PREFIX}/bin"
+	install -m 755 "bin/ytools-recommend" "${DESTDIR}${PREFIX}/bin"
+	install -m 755 "bin/ytools-comments" "${DESTDIR}${PREFIX}/bin"
 
 clean:
 	rm -rf bin
