@@ -33,13 +33,13 @@ $ ytools-recommend
 
 # Installation
 Right now you have to build `ytools` yourself. All you need to get
-started is go.
+started is go. Tested on OpenBSD 6.4 and Xubuntu 18.04.
 
-1. Go to your go workspace source directory (default ist `$HOME/go/src`).
-2. `mkdir -p github.com/codesoap/ && cd github.com/codesoap/`
-3. `git clone https://github.com/codesoap/ytools.git && cd ytools/`
-4. `go get ./...` to install dependencies (`golang.org/x/net/html`)
-5. `make all` will build all binaries, you will find them in `bin/`
-6. `make install` to install the binaries to `/usr/local/`
+1. `mkdir -p "$HOME/go/src/github.com/codesoap/" && cd "$HOME/go/src/github.com/codesoap/"`
+   (adapt if you've set a different `$GOPATH`)
+2. `git clone https://github.com/codesoap/ytools.git && cd ytools/`
+3. `go get ./...` to install dependencies (`golang.org/x/net/html`)
+4. `make install` to install ytools (if you just want the binaries do
+   `make all`)
 
 To uninstall ytools call `make uninstall`.
