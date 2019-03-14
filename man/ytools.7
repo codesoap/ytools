@@ -1,0 +1,69 @@
+.Dd March 14, 2019
+.Dt YTOOLS 7
+.Os
+.Sh NAME
+.Nm ytools
+.Nd tools to interact with YouTube
+.Sh DESCRIPTION
+.Nm
+enables you to browse YouTube without leaving the terminal. The
+goal is not to cover everything you can do via the web interface.
+Instead the purpose of
+.Nm
+is to eliminate the need for the browser in the
+most common use cases.
+.Pp
+.Nm
+consists of these tools:
+.Pp
+.Bl -tag -width 16n -compact
+.It ytools-search
+search for videos
+.It ytools-pick
+print the URL of a video
+.It ytools-info
+display further info, like views, likes and description
+.It ytools-comments
+view some comments of a video
+.It ytools-recommend
+recommend similar videos to the selected one
+.El
+.Sh OPTIONS
+ytools-search takes one or more search terms as arguments.
+.Pp
+ytools-pick, ytools-info, ytools-comments and ytools-recommend take
+either no argument or a video number. The video number refers to
+the numbers displayed in the last ytools-search or ytools-recommend
+call. If no argument is given, the last video picked with ytools-pick
+is assumed.
+.Sh EXAMPLES
+.Pp
+Search for a video:
+.Dl ytools-search Vitalc - Fade Away
+.Pp
+View some info about the second result:
+.Dl ytools-info 2
+.Pp
+Play the audio of it:
+.Bd -offset indent -compact
+mpv --ytdl-format
+.Qq bestaudio/best
+--no-video
+.Qq $(ytools-pick 2)
+.Ed
+.Pp
+View some recommendations for this video; note that the recommendations
+are for the last video picked with ytools-pick, since no video number is given
+as argument:
+.Dl ytools-recommend
+.Pp
+The
+.Nm
+are designed to be used in scripts and require no interaction. You
+could for example write a simple script, that searches for passed
+search terms, interactively asks for the selection of a search
+result and then plays it using
+.Xr mpv 1 .
+.Sh SEE ALSO
+.Xr youtube-dl 1
+.Xr mpv 1
