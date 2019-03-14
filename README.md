@@ -1,4 +1,4 @@
-`ytools` is a set of simple tools to interact with youtube via the terminal.
+`ytools` is a set of simple tools to interact with YouTube via the terminal.
 
 # Usage
 ```console
