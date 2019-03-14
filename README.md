@@ -11,7 +11,7 @@ $ ytools-info 2
 Glass Animals - Black Mambo
 14.643.046 Views  ▲ 81.526  ▼ 1.626  Published on 17 Feb 2015
 
-Our new record “How To Be a Human Being” featuring “Youth” and “Life Itself is out now. Buy it and stream it and watch it and take it on a date now: http://po.st/HTBAHBiTunesYT / Listen on Spotify: http://po.st/ListenGlassAnimalsYT / Order from our store: http://po.st/HTBAHBStoreYT
+Our new record “How To Be a Human Being” featuring “Youth” and
 ...
 $ mpv $(ytools-pick 2)
 Playing: https://www.youtube.com/watch?v=H7bqZIpC3Pg
