@@ -1,6 +1,11 @@
 .PHONY: all install uninstall clean
 
+PLATFORM != uname -s
 PREFIX = /usr/local
+MANPREFIX != if [ ${PLATFORM} = Linux ]; \
+	then echo '/usr/local/share/man'; \
+	else echo '/usr/local/man'; \
+	fi
 
 ROOT = github.com/codesoap/ytools
 
@@ -13,13 +18,16 @@ install: all
 	install -m 755 "bin/ytools-info" "${DESTDIR}${PREFIX}/bin"
 	install -m 755 "bin/ytools-recommend" "${DESTDIR}${PREFIX}/bin"
 	install -m 755 "bin/ytools-comments" "${DESTDIR}${PREFIX}/bin"
+	mkdir -p "${DESTDIR}${MANPREFIX}/man7"
+	install -m 644 "man/ytools.7" "${DESTDIR}${MANPREFIX}/man7"
 
 uninstall:
 	rm -f "${DESTDIR}${PREFIX}/bin/ytools-search" \
 		"${DESTDIR}${PREFIX}/bin/ytools-pick" \
 		"${DESTDIR}${PREFIX}/bin/ytools-info" \
 		"${DESTDIR}${PREFIX}/bin/ytools-recommend" \
-		"${DESTDIR}${PREFIX}/bin/ytools-comments"
+		"${DESTDIR}${PREFIX}/bin/ytools-comments" \
+		"${DESTDIR}${MANPREFIX}/man7/ytools.7"
 
 clean:
 	rm -rf bin
