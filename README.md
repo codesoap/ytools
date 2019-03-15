@@ -34,9 +34,28 @@ $ ytools-recommend
 For more information take a look at `man ytools`.
 
 # Installation
-Right now you have to build `ytools` yourself. All you need to get
-started is go. Tested on OpenBSD 6.4 and Xubuntu 18.04.
+The `ytools` have been tested on OpenBSD 6.4 and Xubuntu 18.04, but
+will probably work on any POSIX compliant operating system.
 
+The easiest way to try `ytools` out is to use the prebuilt binaries,
+which are available for OpenBSD and Linux (amd64 only). If you want
+to properly install `ytools` on your system, I recommend building
+them yourself.
+
+## Using prebuilt binaries
+```shell
+# Download and extract the binaries:
+wget "https://github.com/codesoap/ytools/releases/download/v1.0/ytools_bin_$(uname -s)_amd64.tar.gz"
+tar -xzf "ytools_bin_$(uname -s)_amd64.tar.gz"
+
+# Use ytools by calling the binaries directly, like so:
+./ytools-search Efence - Spaceflight
+```
+
+If you want to read the manual for `ytools`, download `man/ytools.7`
+and place it in `/usr/local/man/man7/`.
+
+## Building
 1. `mkdir -p "$HOME/go/src/github.com/codesoap/" && cd "$HOME/go/src/github.com/codesoap/"`
    (adapt if you've set a different `$GOPATH`)
 2. `git clone https://github.com/codesoap/ytools.git && cd ytools/`
