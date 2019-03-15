@@ -31,6 +31,8 @@ $ ytools-recommend
 ...
 ```
 
+For more information take a look at `man ytools`.
+
 # Installation
 Right now you have to build `ytools` yourself. All you need to get
 started is go. Tested on OpenBSD 6.4 and Xubuntu 18.04.
