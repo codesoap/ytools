@@ -1,12 +1,7 @@
 .PHONY: all install uninstall clean
 
-PLATFORM != uname -s
 PREFIX = /usr/local
-MANPREFIX != if [ ${PLATFORM} = Linux ]; \
-	then echo '/usr/local/share/man'; \
-	else echo '/usr/local/man'; \
-	fi
-
+MANPREFIX = /usr/local/man
 ROOT = github.com/codesoap/ytools
 
 all: bin/ytools-search bin/ytools-pick bin/ytools-info bin/ytools-recommend bin/ytools-comments
