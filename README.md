@@ -68,5 +68,5 @@ To uninstall ytools call `make uninstall`.
 
 ## Porcelain
 You can find some convenient scripts in `porcelain/`. They are *not*
-installed by `make install`. Place the ones you like in `$HOME/bin`
+installed by `make install`. Place the ones you like in `$HOME/bin/`
 (make sure this directory is in your `$PATH`).
