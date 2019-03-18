@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# ytools audio (interactive): search and interactively select a
+# result to listen to
+
+set -e
+
+ytools-search $@
+echo -n "Selection: "
+read selection
+mpv --ytdl-format "bestaudio/best" --no-video "$(ytools-pick "${selection}")"

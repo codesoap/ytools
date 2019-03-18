@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# shortcut for ytools-recommend
+
+ytools-recommend $@

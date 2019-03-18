@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# ytools video (interactive): search and interactively select a result
+# to watch
+
+set -e
+
+ytools-search $@
+echo -n "Selection: "
+read selection
+mpv --ytdl-format="bestvideo[height<=?1080]+bestaudio/best" "$(ytools-pick "${selection}")"

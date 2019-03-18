@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# ytools audio (lucky): search a video and play the first results audio
+
+ytools-search $@ &&
+mpv --ytdl-format "bestaudio/best" --no-video "$(ytools-pick 1)"

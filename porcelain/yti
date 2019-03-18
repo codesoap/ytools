@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# shortcut for ytools-info
+
+ytools-info $@ | less --quit-if-one-screen --no-init

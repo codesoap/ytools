@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# ytools autoplay audio: play the audio of a search result, then
+# keep playing the first recommendations
+
+mpv --ytdl-format "bestaudio/best" --no-video "$(ytools-pick $@)"
+while true
+do
+	echo -n 'Next recommendation:'
+	ytools-recommend | head -n1 | cut -d ':' -f '2-'
+	mpv --ytdl-format "bestaudio/best" --no-video "$(ytools-pick 1)"
+done

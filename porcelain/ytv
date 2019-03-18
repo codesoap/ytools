@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# ytools video: play a search result
+
+mpv --ytdl-format="bestvideo[height<=?1080]+bestaudio/best" "$(ytools-pick "$1")"

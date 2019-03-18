@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# ytools audio: play the audio of a search result
+
+mpv --ytdl-format "bestaudio/best" --no-video "$(ytools-pick $@)"

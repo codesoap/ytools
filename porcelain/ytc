@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# shorthand for ytools-comments
+
+ytools-comments $@
