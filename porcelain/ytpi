@@ -1,0 +1,27 @@
+#!/usr/bin/env sh
+# Insert a YouTube URL into an *.m3u file and add a metadata comment
+# for the new URL
+
+if [ $# -ne 2 ]; then
+	echo "Give the playlist's filename as first argument"
+	echo 'and the new YouTube URL as second argument.'
+	exit 1
+fi
+
+# Add #EXTM3U comment in the first line, if it doesn't exist yet:
+if [ ! -s "$1" ] || $(head -n1 "$1" | grep -vq -e '\s*#EXTM3U'); then
+	touch "$1"
+	tmpfile=$(mktemp)
+	mv "$1" "${tmpfile}"
+	echo '#EXTM3U' > "$1"
+	cat "${tmpfile}" >> "$1"
+	rm "${tmpfile}"
+fi
+
+# Add a new entry for the given link, including an #EXTINF comment:
+metadata=$(youtube-dl --skip-download --get-title --get-duration "$2")
+seconds=$(printf "$metadata" | awk -F ':' \
+	'NR==2 {s = 0; for(i = 1; i <= NF; i++){s = s * 60 + $i}} END {printf s}')
+track_description=$(printf "$metadata" | awk 'NR==1 {print}')
+printf "\n#EXTINF:${seconds},${track_description}\n" >> "$1"
+echo "$2" >> "$1"

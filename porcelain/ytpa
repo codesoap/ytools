@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# Play the audio of an *.m3u playlist
+
+mpv --ytdl-format "bestaudio/best" --no-video \
+    --term-playing-msg='Title:${media-title}' "$@"
