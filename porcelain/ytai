@@ -5,6 +5,7 @@
 set -e
 
 ytools-search $@
-echo -n "Selection: "
+echo -n 'Selection [1]: '
 read selection
+test -z "${selection}" && selection=1
 mpv --ytdl-format "bestaudio/best" --no-video "$(ytools-pick "${selection}")"
