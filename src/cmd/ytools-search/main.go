@@ -62,7 +62,7 @@ func scrape_off_videos(search_url string) (videos []Video, err error) {
 			return
 		case html.StartTagToken:
 			token := tokenizer.Token()
-			if is_title_link(token) {
+			if is_video_title_link(token) {
 				video, ok := extract_video_from_title_link(token)
 				if !ok {
 					return
@@ -90,15 +90,21 @@ func print_video_titles(videos []Video) {
 	}
 }
 
-func is_title_link(token html.Token) bool {
+func is_video_title_link(token html.Token) bool {
+	is_tile_link, is_video := false, false
 	if token.Data == "a" {
 		for _, a := range token.Attr {
 			if a.Key == "class" && strings.Contains(a.Val, "yt-uix-tile-link") {
-				return true
+				is_tile_link = true
+			}
+			// This filters out channels and playlists:
+			if a.Key == "href" && strings.HasPrefix(a.Val, "/watch") &&
+				len(a.Val) == 20 {
+				is_video = true
 			}
 		}
 	}
-	return false
+	return is_tile_link && is_video
 }
 
 func extract_video_from_title_link(token html.Token) (video Video, ok bool) {
