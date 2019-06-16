@@ -109,7 +109,7 @@ func GetLastPickedUrl() (last_picked_url string, err error) {
 
 func GetDataDir() (data_dir string, err error) {
 	data_dir_base := os.Getenv("XDG_DATA_HOME")
-	if data_dir == "" {
+	if data_dir_base == "" {
 		data_dir_base = filepath.Join(os.Getenv("HOME"), ".local/share/")
 	}
 	data_dir = filepath.Join(data_dir_base, "ytools/")
