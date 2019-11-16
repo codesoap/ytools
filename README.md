@@ -36,7 +36,7 @@ For more information take a look at `man ytools`.
 # Installation
 The `ytools` have been tested on OpenBSD -stable and Xubuntu 18.04, but
 will probably work on any POSIX compliant operating system, that is
-[supported by go](https://github.com/golang/go/wiki/GoArm#introduction).
+[supported by go](https://github.com/golang/go/wiki/MinimumRequirements).
 
 The easiest way to try `ytools` out is to use the prebuilt binaries,
 which are available for OpenBSD and Linux (amd64 only). If you want
