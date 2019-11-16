@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/codesoap/ytools/src/ytools"
+	"github.com/codesoap/ytools"
 	"golang.org/x/net/html"
 	"io"
 	"io/ioutil"

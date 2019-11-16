@@ -27,17 +27,17 @@ uninstall:
 clean:
 	rm -rf bin
 
-bin/ytools-search: src/cmd/ytools-search/main.go src/ytools/common.go
-	go build -o bin/ytools-search ${ROOT}/src/cmd/ytools-search
+bin/ytools-search: cmd/ytools-search/main.go common.go
+	go build -o bin/ytools-search ${ROOT}/cmd/ytools-search
 
-bin/ytools-pick: src/cmd/ytools-pick/main.go src/ytools/common.go
-	go build -o bin/ytools-pick ${ROOT}/src/cmd/ytools-pick
+bin/ytools-pick: cmd/ytools-pick/main.go common.go
+	go build -o bin/ytools-pick ${ROOT}/cmd/ytools-pick
 
-bin/ytools-info: src/cmd/ytools-info/main.go src/ytools/common.go
-	go build -o bin/ytools-info ${ROOT}/src/cmd/ytools-info
+bin/ytools-info: cmd/ytools-info/main.go common.go
+	go build -o bin/ytools-info ${ROOT}/cmd/ytools-info
 
-bin/ytools-recommend: src/cmd/ytools-recommend/main.go src/ytools/common.go
-	go build -o bin/ytools-recommend ${ROOT}/src/cmd/ytools-recommend
+bin/ytools-recommend: cmd/ytools-recommend/main.go common.go
+	go build -o bin/ytools-recommend ${ROOT}/cmd/ytools-recommend
 
-bin/ytools-comments: src/cmd/ytools-comments/main.go src/ytools/common.go
-	go build -o bin/ytools-comments ${ROOT}/src/cmd/ytools-comments
+bin/ytools-comments: cmd/ytools-comments/main.go common.go
+	go build -o bin/ytools-comments ${ROOT}/cmd/ytools-comments

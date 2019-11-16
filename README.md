@@ -57,14 +57,12 @@ If you want to read the manual for `ytools`, download `man/ytools.7`
 and place it in `/usr/local/man/man7/`.
 
 ## Building
-1. `mkdir -p "$HOME/go/src/github.com/codesoap/" && cd "$HOME/go/src/github.com/codesoap/"`
-   (adapt if you've set a different `$GOPATH`)
-2. `git clone https://github.com/codesoap/ytools.git && cd ytools/`
-3. `go get ./...` to install dependencies (`golang.org/x/net/html`)
-4. `make install` to install ytools (if you just want the binaries do
-   `make all`)
+1. `go get -v -u -d "github.com/codesoap/ytools/..."`
+2. `cd ~/go/src/github.com/codesoap/ytools/`
+3. `make all` will generate the binaries and place them in `./bin/`
+4. As root execute `make install` to install the binaries and man page
 
-To uninstall ytools call `make uninstall`.
+To uninstall ytools call `make uninstall` as root.
 
 ## Porcelain
 You can find some convenient scripts in `porcelain/`. They are *not*

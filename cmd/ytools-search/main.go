@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/codesoap/ytools/src/ytools"
+	"github.com/codesoap/ytools"
 	"golang.org/x/net/html"
 	"net/http"
 	"net/url"
