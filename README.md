@@ -34,35 +34,28 @@ $ ytools-recommend
 For more information take a look at `man ytools`.
 
 # Installation
-The `ytools` have been tested on OpenBSD -stable and Xubuntu 18.04, but
-will probably work on any POSIX compliant operating system, that is
-[supported by go](https://github.com/golang/go/wiki/MinimumRequirements).
+The easiest way to try `ytools` is to use the prebuilt binaries, that
+are available at the [releases
+page](https://github.com/codesoap/ytools/releases).
 
-The easiest way to try `ytools` out is to use the prebuilt binaries,
-which are available for OpenBSD and Linux (amd64 only). If you want
-to properly install `ytools` on your system, I recommend building
-them yourself.
+If you want to properly install `ytools` on your system, I recommend
+building them yourself:
 
-## Using prebuilt binaries
 ```shell
-# Download and extract the binaries:
-wget "https://github.com/codesoap/ytools/releases/download/v1.0/ytools_bin_$(uname -s)_amd64.tar.gz"
-tar -xzf "ytools_bin_$(uname -s)_amd64.tar.gz"
+git clone git@github.com:codesoap/ytools.git
+cd ytools
 
-# Use ytools by calling the binaries directly, like so:
-./ytools-search Efence - Spaceflight
+# Execute as root to install:
+make install
+
+# To uninstall use (again as root):
+# make uninstall
+
+# If you don't want to run make as root and don't care for the man
+# page, you could alternatively run the following. This will install the
+# binaries to ~/go/bin/:
+# go install ./...
 ```
-
-If you want to read the manual for `ytools`, download `man/ytools.7`
-and place it in `/usr/local/man/man7/`.
-
-## Building
-1. `go get -v -u -d "github.com/codesoap/ytools/..."`
-2. `cd ~/go/src/github.com/codesoap/ytools/`
-3. `make all` will generate the binaries and place them in `./bin/`
-4. As root execute `make install` to install the binaries and man page
-
-To uninstall ytools call `make uninstall` as root.
 
 ## Porcelain
 You can find some convenient scripts in `porcelain/`. They are *not*
