@@ -52,25 +52,8 @@ type ItemSectionRenderer struct {
 }
 
 type ItemSectionRendererContent struct {
-	// ShelfRenderer ShelfRenderer
 	VideoRenderer VideoRenderer
 }
-
-// type ShelfRenderer struct {
-// 	Content ShelfRendererContent
-// }
-
-// type ShelfRendererContent struct {
-// 	VerticalListRenderer VerticalListRenderer
-// }
-
-// type VerticalListRenderer struct {
-// 	Items []VerticalListRendererItem
-// }
-
-// type VerticalListRendererItem struct {
-// 	VideoRenderer VideoRenderer
-// }
 
 type VideoRenderer struct {
 	VideoId string
