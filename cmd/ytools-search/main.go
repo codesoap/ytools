@@ -21,51 +21,31 @@ type Video struct {
 	Url   string
 }
 
-// TODO: Consider using nested structs to save some lines of code.
-
 type YtInitialData struct {
-	Contents YtInitialDataContents
-}
-
-type YtInitialDataContents struct {
-	TwoColumnSearchResultsRenderer TwoColumnSearchResultsRenderer
-}
-
-type TwoColumnSearchResultsRenderer struct {
-	PrimaryContents PrimaryContents
-}
-
-type PrimaryContents struct {
-	SectionListRenderer SectionListRenderer
-}
-
-type SectionListRenderer struct {
-	Contents []SectionListRendererContent
-}
-
-type SectionListRendererContent struct {
-	ItemSectionRenderer ItemSectionRenderer
-}
-
-type ItemSectionRenderer struct {
-	Contents []ItemSectionRendererContent
-}
-
-type ItemSectionRendererContent struct {
-	VideoRenderer VideoRenderer
+	Contents struct {
+		TwoColumnSearchResultsRenderer struct {
+			PrimaryContents struct {
+				SectionListRenderer struct {
+					Contents []struct {
+						ItemSectionRenderer struct {
+							Contents []struct {
+								VideoRenderer VideoRenderer
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 type VideoRenderer struct {
 	VideoId string
-	Title   VideoRendererTitle
-}
-
-type VideoRendererTitle struct {
-	Runs []Run
-}
-
-type Run struct {
-	Text string
+	Title struct {
+		Runs []struct {
+			Text string
+		}
+	}
 }
 
 func main() {
