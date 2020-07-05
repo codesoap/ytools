@@ -1,12 +1,11 @@
 package main
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/codesoap/ytools"
-	"golang.org/x/net/html"
-	"net/http"
 	"os"
-	"strings"
 )
 
 const max_results = 16
@@ -14,6 +13,27 @@ const max_results = 16
 type Video struct {
 	Title string
 	Url   string
+}
+
+type YtInitialData struct {
+	Contents struct {
+		TwoColumnWatchNextResults struct {
+			SecondaryResults struct {
+				SecondaryResults struct {
+					Results []struct {
+						CompactVideoRenderer CompactVideoRenderer
+					}
+				}
+			}
+		}
+	}
+}
+
+type CompactVideoRenderer struct {
+	VideoId string
+	Title   struct {
+		SimpleText string
+	}
 }
 
 func main() {
@@ -37,34 +57,49 @@ func main() {
 }
 
 func scrape_off_recommendations(video_url string) (videos []Video, err error) {
-	videos = make([]Video, 0, max_results)
-
-	resp, err := http.Get(video_url)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not get '%s'\n", video_url)
+	var dataJson []byte
+	if dataJson, err = ytools.ExtractJson(video_url); err != nil {
 		return
 	}
-	defer resp.Body.Close()
+	return extract_videos(dataJson)
+}
 
-	tokenizer := html.NewTokenizer(resp.Body)
-	for {
-		switch tokenizer.Next() {
-		case html.ErrorToken:
-			return
-		case html.StartTagToken:
-			token := tokenizer.Token()
-			if is_recommendation(token) {
-				video, ok := extract_next_video(token)
-				if !ok {
-					err = fmt.Errorf("failed at video extraction")
-					return
-				}
-				videos = append(videos, video)
-				if len(videos) >= max_results {
-					return
-				}
-			}
+func extract_videos(dataJson []byte) (videos []Video, err error) {
+	videos = make([]Video, 0, max_results)
+	var data YtInitialData
+	if err = json.Unmarshal(dataJson, &data); err != nil {
+		return
+	}
+
+	sr := data.Contents.TwoColumnWatchNextResults.SecondaryResults
+	for _, result := range sr.SecondaryResults.Results {
+		var video Video
+		video, err = extract_video_from_video_renderer(result.CompactVideoRenderer)
+		if err != nil {
+			// This sometimes happens, but I don't think it's problematic.
+			err = nil
+			continue
 		}
+		videos = append(videos, video)
+		if len(videos) == max_results {
+			break
+		}
+	}
+	return
+}
+
+func extract_video_from_video_renderer(renderer CompactVideoRenderer) (video Video, err error) {
+	if len(renderer.VideoId) == 0 {
+		err = errors.New("videoId is missing in videoRenderer")
+		return
+	}
+	if len(renderer.Title.SimpleText) == 0 {
+		err = errors.New("no title found for videoRenderer")
+		return
+	}
+	video = Video{
+		Url:   fmt.Sprintf("https://www.youtube.com/watch?v=%s", renderer.VideoId),
+		Title: renderer.Title.SimpleText,
 	}
 	return
 }
@@ -81,27 +116,4 @@ func print_video_titles(videos []Video) {
 	for i, video := range videos {
 		fmt.Printf("%2d: %s\n", i+1, video.Title)
 	}
-}
-
-func is_recommendation(token html.Token) bool {
-	for _, a := range token.Attr {
-		if a.Key == "class" && strings.Contains(a.Val, "content-link") {
-			return true
-		}
-	}
-	return false
-}
-
-func extract_next_video(token html.Token) (video Video, ok bool) {
-	for _, a := range token.Attr {
-		if a.Key == "href" {
-			video.Url = fmt.Sprintf("https://www.youtube.com%s", a.Val)
-		} else if a.Key == "title" {
-			video.Title = a.Val
-		}
-	}
-	if video.Url != "" && video.Title != "" {
-		ok = true
-	}
-	return
 }
