@@ -5,12 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/codesoap/ytools"
-	"io"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -41,7 +37,7 @@ type YtInitialData struct {
 
 type VideoRenderer struct {
 	VideoId string
-	Title struct {
+	Title   struct {
 		Runs []struct {
 			Text string
 		}
@@ -78,31 +74,11 @@ func get_search_url() string {
 }
 
 func scrape_off_videos(search_url string) (videos []Video, err error) {
-	resp, err := http.Get(search_url)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not get '%s'\n", search_url)
-		return
-	}
-	defer resp.Body.Close()
-	dataJson, err := extract_json(resp.Body)
-	if err != nil {
+	var dataJson []byte
+	if dataJson, err = ytools.ExtractJson(search_url); err != nil {
 		return
 	}
 	return extract_videos(dataJson)
-}
-
-func extract_json(body io.Reader) (mainJson []byte, err error) {
-	bytes, err := ioutil.ReadAll(body)
-	if err != nil {
-		return
-	}
-	re := regexp.MustCompile(`(?m)^ *window\["ytInitialData"\] *= *(.*); *$`)
-	matches := re.FindSubmatch(bytes)
-	if matches == nil {
-		err = errors.New("retrieved HTML does not contain the expected JSON")
-		return
-	}
-	return matches[1], nil
 }
 
 func extract_videos(dataJson []byte) (videos []Video, err error) {
@@ -145,7 +121,7 @@ func extract_video_from_video_renderer(renderer VideoRenderer) (video Video, err
 		return
 	}
 	video = Video{
-		Url: fmt.Sprintf("https://www.youtube.com/watch?v=%s", renderer.VideoId),
+		Url:   fmt.Sprintf("https://www.youtube.com/watch?v=%s", renderer.VideoId),
 		Title: renderer.Title.Runs[0].Text,
 	}
 	return

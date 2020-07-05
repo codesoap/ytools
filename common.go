@@ -2,10 +2,13 @@ package ytools
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -118,4 +121,26 @@ func GetDataDir() (data_dir string, err error) {
 		fmt.Fprintln(os.Stderr, "Failed to create directory '%s'.", data_dir)
 	}
 	return
+}
+
+// ExtractJson returns the ytInitialData JSON from the HTML at the
+// given URL.
+func ExtractJson(url string) (mainJson []byte, err error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		err = fmt.Errorf("could not get '%s'\n", url)
+		return
+	}
+	defer resp.Body.Close()
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	re := regexp.MustCompile(`(?m)^ *window\["ytInitialData"\] *= *(.*); *$`)
+	matches := re.FindSubmatch(bytes)
+	if matches == nil {
+		err = errors.New("retrieved HTML does not contain the expected JSON")
+		return
+	}
+	return matches[1], nil
 }
