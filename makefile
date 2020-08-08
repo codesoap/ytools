@@ -12,5 +12,4 @@ uninstall:
 		"${INSTALLDIR}/bin/ytools-pick" \
 		"${INSTALLDIR}/bin/ytools-info" \
 		"${INSTALLDIR}/bin/ytools-recommend" \
-		"${INSTALLDIR}/bin/ytools-comments" \
 		"${INSTALLDIR}/man/man7/ytools.7"

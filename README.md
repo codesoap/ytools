@@ -16,14 +16,6 @@ Our new record “How To Be a Human Being” featuring “Youth” and
 $ mpv $(ytools-pick 2)
 Playing: https://www.youtube.com/watch?v=H7bqZIpC3Pg
 ...
-$ # Without an argument the comments of the last picked video are shown:
-$ ytools-comments
-=== Comment #1: ===
-If you're here then you have good taste in music... ;)
-
-=== Comment #2: ===
-Atyphical
-...
 $ ytools-recommend
  1: Glass Animals - Cane Shuga
  2: Black Coast - TRNDSTTR (Lucian Remix)
