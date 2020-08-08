@@ -1,0 +1,9 @@
+Revision history ytools.
+Changelog format: https://metacpan.org/pod/distribution/CPAN-Changes/lib/CPAN/Changes/Spec.pod
+
+1.1.0 2020-08-08
+	- Removed ytools-comments
+	- Fixed tools to work with the new HTML of YouTube pages
+
+1.0.0 2019-03-15
+	- Initial release
