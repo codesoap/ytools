@@ -2,6 +2,7 @@ Revision history ytools.
 Changelog format: https://metacpan.org/pod/distribution/CPAN-Changes/lib/CPAN/Changes/Spec.pod
 
 Unreleased
+	- Added LICENSE file
 	- Use camelCase for identifiers in the code
 	- Improved error handling
 
