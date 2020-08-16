@@ -13,39 +13,39 @@ import (
 )
 
 func SaveUrls(urls []string) (err error) {
-	data_dir, err := GetDataDir()
+	dataDir, err := GetDataDir()
 	if err != nil {
 		return
 	}
-	urls_filename := filepath.Join(data_dir, "search_results")
-	urls_file, err := os.Create(urls_filename)
+	urlsFilename := filepath.Join(dataDir, "search_results")
+	urlsFile, err := os.Create(urlsFilename)
 	if err != nil {
 		return
 	}
 	defer func() {
 		if err != nil {
-			urls_file.Close()
+			urlsFile.Close()
 		} else {
-			err = urls_file.Close()
+			err = urlsFile.Close()
 		}
 	}()
 	for _, url := range urls {
-		_, err = fmt.Fprintln(urls_file, url)
+		_, err = fmt.Fprintln(urlsFile, url)
 	}
 	return
 }
 
-func GetDesiredVideoUrl() (video_url string, err error) {
+func GetDesiredVideoUrl() (videoUrl string, err error) {
 	switch len(os.Args) {
 	case 1:
-		video_url, err = GetLastPickedUrl()
+		videoUrl, err = GetLastPickedUrl()
 	case 2:
 		var selection int
 		selection, err = strconv.Atoi(os.Args[1])
 		if err != nil {
 			return
 		}
-		video_url, err = GetSearchResult(selection - 1)
+		videoUrl, err = GetSearchResult(selection - 1)
 	default:
 		err = fmt.Errorf("invalid argument count; give a video number as " +
 			"argument, or no argument to select the last picked")
@@ -53,27 +53,27 @@ func GetDesiredVideoUrl() (video_url string, err error) {
 	return
 }
 
-func GetSearchResult(i int) (search_result string, err error) {
-	search_results, err := get_search_results()
+func GetSearchResult(i int) (searchResult string, err error) {
+	searchResults, err := getSearchResults()
 	if err == nil {
-		if i < 0 || i >= len(search_results) {
+		if i < 0 || i >= len(searchResults) {
 			err = fmt.Errorf("invalid search result index")
 		} else {
-			search_result = search_results[i]
+			searchResult = searchResults[i]
 		}
 	}
 	return
 }
 
-func get_search_results() (search_results []string, err error) {
-	search_results = make([]string, 0)
+func getSearchResults() (searchResults []string, err error) {
+	searchResults = make([]string, 0)
 
-	data_dir, err := GetDataDir()
+	dataDir, err := GetDataDir()
 	if err != nil {
 		return
 	}
-	urls_file := filepath.Join(data_dir, "search_results")
-	file, err := os.Open(urls_file)
+	urlsFile := filepath.Join(dataDir, "search_results")
+	file, err := os.Open(urlsFile)
 	if err != nil {
 		return
 	}
@@ -81,7 +81,7 @@ func get_search_results() (search_results []string, err error) {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		search_results = append(search_results, scanner.Text())
+		searchResults = append(searchResults, scanner.Text())
 	}
 
 	if err := scanner.Err(); err != nil {
@@ -91,27 +91,27 @@ func get_search_results() (search_results []string, err error) {
 	return
 }
 
-func GetLastPickedUrl() (last_picked_url string, err error) {
-	data_dir, err := GetDataDir()
+func GetLastPickedUrl() (lastPickedUrl string, err error) {
+	dataDir, err := GetDataDir()
 	if err != nil {
 		return
 	}
-	last_picked_filename := filepath.Join(data_dir, "last_picked")
-	file_content, err := ioutil.ReadFile(last_picked_filename)
+	lastPickedFilename := filepath.Join(dataDir, "last_picked")
+	fileContent, err := ioutil.ReadFile(lastPickedFilename)
 	if err != nil {
 		return
 	}
-	last_picked_url = strings.TrimSpace(string(file_content))
+	lastPickedUrl = strings.TrimSpace(string(fileContent))
 	return
 }
 
-func GetDataDir() (data_dir string, err error) {
-	data_dir_base := os.Getenv("XDG_DATA_HOME")
-	if data_dir_base == "" {
-		data_dir_base = filepath.Join(os.Getenv("HOME"), ".local/share/")
+func GetDataDir() (dataDir string, err error) {
+	dataDirBase := os.Getenv("XDG_DATA_HOME")
+	if dataDirBase == "" {
+		dataDirBase = filepath.Join(os.Getenv("HOME"), ".local/share/")
 	}
-	data_dir = filepath.Join(data_dir_base, "ytools/")
-	err = os.MkdirAll(data_dir, 0755)
+	dataDir = filepath.Join(dataDirBase, "ytools/")
+	err = os.MkdirAll(dataDir, 0755)
 	return
 }
 

@@ -2,6 +2,7 @@ Revision history ytools.
 Changelog format: https://metacpan.org/pod/distribution/CPAN-Changes/lib/CPAN/Changes/Spec.pod
 
 Unreleased
+	- Use camelCase for identifiers in the code
 	- Improved error handling
 
 1.1.0 2020-08-08

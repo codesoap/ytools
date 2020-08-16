@@ -13,24 +13,24 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Failed to get video URL: %s\n", err.Error())
 		os.Exit(1)
 	}
-	save_as_last_picked(url)
+	saveAsLastPicked(url)
 	fmt.Println(url)
 }
 
-func save_as_last_picked(url string) (err error) {
-	data_dir, err := ytools.GetDataDir()
+func saveAsLastPicked(url string) (err error) {
+	dataDir, err := ytools.GetDataDir()
 	if err != nil {
 		return
 	}
-	last_picked_filename := filepath.Join(data_dir, "last_picked")
-	last_picked_file, err := os.Create(last_picked_filename)
+	lastPickedFilename := filepath.Join(dataDir, "last_picked")
+	lastPickedFile, err := os.Create(lastPickedFilename)
 	if err != nil {
 		return
 	}
 	defer func() {
-		err = last_picked_file.Close()
+		err = lastPickedFile.Close()
 	}()
-	_, err = fmt.Fprintln(last_picked_file, url)
+	_, err = fmt.Fprintln(lastPickedFile, url)
 	if err != nil {
 		return
 	}

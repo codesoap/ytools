@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const max_results = 12
+const maxResults = 12
 
 type Video struct {
 	Title string
@@ -44,8 +44,8 @@ type VideoRenderer struct {
 }
 
 func main() {
-	search_url := get_search_url()
-	videos, err := scrape_off_videos(search_url)
+	searchUrl := getSearchUrl()
+	videos, err := scrapeOffVideos(searchUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to get video URLs: %s\n", err.Error())
 		os.Exit(1)
@@ -54,34 +54,34 @@ func main() {
 		fmt.Fprintf(os.Stderr, "No videos found.\n")
 		os.Exit(1)
 	}
-	if err := save_videos_urls(videos); err != nil {
+	if err := saveVideosUrls(videos); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed saving found URLs: %s\n", err.Error())
 		os.Exit(1)
 	}
-	print_video_titles(videos)
+	printVideoTitles(videos)
 }
 
-func get_search_url() string {
+func getSearchUrl() string {
 	if len(os.Args) < 2 {
 		fmt.Fprintf(os.Stderr, "Give one or more search terms as parameters.\n")
 		os.Exit(1)
 	}
-	search_string := url.PathEscape(strings.Join(os.Args[1:], " "))
+	searchString := url.PathEscape(strings.Join(os.Args[1:], " "))
 	return fmt.Sprintf(
 		"https://www.youtube.com/results?search_query=%s",
-		search_string)
+		searchString)
 }
 
-func scrape_off_videos(search_url string) (videos []Video, err error) {
+func scrapeOffVideos(searchUrl string) (videos []Video, err error) {
 	var dataJson []byte
-	if dataJson, err = ytools.ExtractJson(search_url); err != nil {
+	if dataJson, err = ytools.ExtractJson(searchUrl); err != nil {
 		return
 	}
-	return extract_videos(dataJson)
+	return extractVideos(dataJson)
 }
 
-func extract_videos(dataJson []byte) (videos []Video, err error) {
-	videos = make([]Video, 0, max_results)
+func extractVideos(dataJson []byte) (videos []Video, err error) {
+	videos = make([]Video, 0, maxResults)
 	var data YtInitialData
 	if err = json.Unmarshal(dataJson, &data); err != nil {
 		return
@@ -91,14 +91,14 @@ func extract_videos(dataJson []byte) (videos []Video, err error) {
 	for _, slrContent := range pc.SectionListRenderer.Contents {
 		for _, isrContent := range slrContent.ItemSectionRenderer.Contents {
 			var video Video
-			video, err = extract_video_from_video_renderer(isrContent.VideoRenderer)
+			video, err = extractVideoFromVideoRenderer(isrContent.VideoRenderer)
 			if err != nil {
 				// This sometimes happens, but I don't think it's problematic.
 				err = nil
 				continue
 			}
 			videos = append(videos, video)
-			if len(videos) == max_results {
+			if len(videos) == maxResults {
 				break
 			}
 		}
@@ -106,7 +106,7 @@ func extract_videos(dataJson []byte) (videos []Video, err error) {
 	return
 }
 
-func extract_video_from_video_renderer(renderer VideoRenderer) (video Video, err error) {
+func extractVideoFromVideoRenderer(renderer VideoRenderer) (video Video, err error) {
 	if len(renderer.VideoId) == 0 {
 		err = fmt.Errorf("videoId is missing in videoRenderer")
 		return
@@ -126,15 +126,15 @@ func extract_video_from_video_renderer(renderer VideoRenderer) (video Video, err
 	return
 }
 
-func save_videos_urls(videos []Video) (err error) {
-	videos_urls := make([]string, 0, max_results)
+func saveVideosUrls(videos []Video) (err error) {
+	videosUrls := make([]string, 0, maxResults)
 	for _, video := range videos {
-		videos_urls = append(videos_urls, video.Url)
+		videosUrls = append(videosUrls, video.Url)
 	}
-	return ytools.SaveUrls(videos_urls)
+	return ytools.SaveUrls(videosUrls)
 }
 
-func print_video_titles(videos []Video) {
+func printVideoTitles(videos []Video) {
 	for i, video := range videos {
 		fmt.Printf("%2d: %s\n", i+1, video.Title)
 	}

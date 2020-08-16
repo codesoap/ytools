@@ -77,35 +77,35 @@ type VideoSecondaryInfoRenderer struct {
 }
 
 func main() {
-	video_url, err := ytools.GetDesiredVideoUrl()
+	videoUrl, err := ytools.GetDesiredVideoUrl()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to get video URL: %s\n", err.Error())
 		os.Exit(1)
 	}
-	info, err := scrape_off_info(video_url)
+	info, err := scrapeOffInfo(videoUrl)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Failed to scrape the videos page: %s\n", err.Error())
 		os.Exit(1)
 	}
-	print_info(info)
+	printInfo(info)
 }
 
-func print_info(info Info) {
+func printInfo(info Info) {
 	fmt.Println(info.Title)
 	f := "%s  ▲ %s  ▼ %s  %s\n\n"
 	fmt.Printf(f, info.Views, info.Likes, info.Dislikes, info.Date)
 	fmt.Println(info.Description)
 }
 
-func scrape_off_info(url string) (info Info, err error) {
+func scrapeOffInfo(url string) (info Info, err error) {
 	var dataJson []byte
 	if dataJson, err = ytools.ExtractJson(url); err != nil {
 		return
 	}
-	return extract_info(dataJson)
+	return extractInfo(dataJson)
 }
 
-func extract_info(dataJson []byte) (info Info, err error) {
+func extractInfo(dataJson []byte) (info Info, err error) {
 	var data YtInitialData
 	if err = json.Unmarshal(dataJson, &data); err != nil {
 		return
@@ -116,24 +116,24 @@ func extract_info(dataJson []byte) (info Info, err error) {
 	}
 	primaryInfo := r.Contents[0].VideoPrimaryInfoRenderer
 	secondaryInfo := r.Contents[1].VideoSecondaryInfoRenderer
-	if err = fill_title(&info, primaryInfo); err != nil {
+	if err = fillTitle(&info, primaryInfo); err != nil {
 		return
 	}
-	if err = fill_views(&info, primaryInfo); err != nil {
+	if err = fillViews(&info, primaryInfo); err != nil {
 		return
 	}
-	if err = fill_votes(&info, primaryInfo); err != nil {
+	if err = fillVotes(&info, primaryInfo); err != nil {
 		return
 	}
-	if err = fill_date(&info, primaryInfo); err != nil {
+	if err = fillDate(&info, primaryInfo); err != nil {
 		return
 	}
 	// TODO: Owner
-	fill_description(&info, secondaryInfo)
+	fillDescription(&info, secondaryInfo)
 	return
 }
 
-func fill_title(info *Info, data VideoPrimaryInfoRenderer) error {
+func fillTitle(info *Info, data VideoPrimaryInfoRenderer) error {
 	if len(data.Title.Runs) != 1 {
 		return fmt.Errorf("no or multiple titles found in JSON")
 	}
@@ -144,7 +144,7 @@ func fill_title(info *Info, data VideoPrimaryInfoRenderer) error {
 	return nil
 }
 
-func fill_views(info *Info, data VideoPrimaryInfoRenderer) error {
+func fillViews(info *Info, data VideoPrimaryInfoRenderer) error {
 	info.Views = data.ViewCount.VideoViewCountRenderer.ViewCount.SimpleText
 	if len(info.Views) == 0 {
 		return fmt.Errorf("views is empty")
@@ -152,7 +152,7 @@ func fill_views(info *Info, data VideoPrimaryInfoRenderer) error {
 	return nil
 }
 
-func fill_votes(info *Info, data VideoPrimaryInfoRenderer) error {
+func fillVotes(info *Info, data VideoPrimaryInfoRenderer) error {
 	tooltip := data.SentimentBar.SentimentBarRenderer.Tooltip
 	numbers := strings.Split(tooltip, " / ")
 	if len(numbers) != 2 {
@@ -163,7 +163,7 @@ func fill_votes(info *Info, data VideoPrimaryInfoRenderer) error {
 	return nil
 }
 
-func fill_date(info *Info, data VideoPrimaryInfoRenderer) error {
+func fillDate(info *Info, data VideoPrimaryInfoRenderer) error {
 	info.Date = data.DateText.SimpleText
 	if len(info.Date) == 0 {
 		return fmt.Errorf("date is empty")
@@ -171,7 +171,7 @@ func fill_date(info *Info, data VideoPrimaryInfoRenderer) error {
 	return nil
 }
 
-func fill_description(info *Info, data VideoSecondaryInfoRenderer) {
+func fillDescription(info *Info, data VideoSecondaryInfoRenderer) {
 	desc := []byte("")
 	for _, run := range data.Description.Runs {
 		desc = append(desc, []byte(run.Text)...)

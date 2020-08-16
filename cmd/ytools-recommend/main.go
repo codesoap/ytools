@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-const max_results = 16
+const maxResults = 16
 
 type Video struct {
 	Title string
@@ -36,12 +36,12 @@ type CompactVideoRenderer struct {
 }
 
 func main() {
-	video_url, err := ytools.GetDesiredVideoUrl()
+	videoUrl, err := ytools.GetDesiredVideoUrl()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to get the video URL: %s\n", err.Error())
 		os.Exit(1)
 	}
-	recommendations, err := scrape_off_recommendations(video_url)
+	recommendations, err := scrapeOffRecommendations(videoUrl)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to find recommendations: %s\n", err.Error())
 		os.Exit(1)
@@ -50,23 +50,23 @@ func main() {
 		fmt.Fprintf(os.Stderr, "No recommendations found.\n")
 		os.Exit(1)
 	}
-	if err := save_recommendations_urls(recommendations); err != nil {
+	if err := saveRecommendationsUrls(recommendations); err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to save found URLs: %s\n", err.Error())
 		os.Exit(1)
 	}
-	print_video_titles(recommendations)
+	printVideoTitles(recommendations)
 }
 
-func scrape_off_recommendations(video_url string) (videos []Video, err error) {
+func scrapeOffRecommendations(videoUrl string) (videos []Video, err error) {
 	var dataJson []byte
-	if dataJson, err = ytools.ExtractJson(video_url); err != nil {
+	if dataJson, err = ytools.ExtractJson(videoUrl); err != nil {
 		return
 	}
-	return extract_videos(dataJson)
+	return extractVideos(dataJson)
 }
 
-func extract_videos(dataJson []byte) (videos []Video, err error) {
-	videos = make([]Video, 0, max_results)
+func extractVideos(dataJson []byte) (videos []Video, err error) {
+	videos = make([]Video, 0, maxResults)
 	var data YtInitialData
 	if err = json.Unmarshal(dataJson, &data); err != nil {
 		return
@@ -75,21 +75,21 @@ func extract_videos(dataJson []byte) (videos []Video, err error) {
 	sr := data.Contents.TwoColumnWatchNextResults.SecondaryResults
 	for _, result := range sr.SecondaryResults.Results {
 		var video Video
-		video, err = extract_video_from_video_renderer(result.CompactVideoRenderer)
+		video, err = extractVideoFromVideoRenderer(result.CompactVideoRenderer)
 		if err != nil {
 			// This sometimes happens, but I don't think it's problematic.
 			err = nil
 			continue
 		}
 		videos = append(videos, video)
-		if len(videos) == max_results {
+		if len(videos) == maxResults {
 			break
 		}
 	}
 	return
 }
 
-func extract_video_from_video_renderer(renderer CompactVideoRenderer) (video Video, err error) {
+func extractVideoFromVideoRenderer(renderer CompactVideoRenderer) (video Video, err error) {
 	if len(renderer.VideoId) == 0 {
 		err = fmt.Errorf("videoId is missing in videoRenderer")
 		return
@@ -105,15 +105,15 @@ func extract_video_from_video_renderer(renderer CompactVideoRenderer) (video Vid
 	return
 }
 
-func save_recommendations_urls(videos []Video) (err error) {
-	videos_urls := make([]string, 0, max_results)
+func saveRecommendationsUrls(videos []Video) (err error) {
+	videosUrls := make([]string, 0, maxResults)
 	for _, video := range videos {
-		videos_urls = append(videos_urls, video.Url)
+		videosUrls = append(videosUrls, video.Url)
 	}
-	return ytools.SaveUrls(videos_urls)
+	return ytools.SaveUrls(videosUrls)
 }
 
-func print_video_titles(videos []Video) {
+func printVideoTitles(videos []Video) {
 	for i, video := range videos {
 		fmt.Printf("%2d: %s\n", i+1, video.Title)
 	}
