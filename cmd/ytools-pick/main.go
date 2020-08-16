@@ -10,6 +10,7 @@ import (
 func main() {
 	url, err := ytools.GetDesiredVideoUrl()
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to get video URL: %s\n", err.Error())
 		os.Exit(1)
 	}
 	save_as_last_picked(url)
@@ -24,7 +25,6 @@ func save_as_last_picked(url string) (err error) {
 	last_picked_filename := filepath.Join(data_dir, "last_picked")
 	last_picked_file, err := os.Create(last_picked_filename)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Could not create last_picked file.")
 		return
 	}
 	defer func() {

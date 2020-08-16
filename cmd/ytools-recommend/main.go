@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/codesoap/ytools"
 	"os"
@@ -39,10 +38,12 @@ type CompactVideoRenderer struct {
 func main() {
 	video_url, err := ytools.GetDesiredVideoUrl()
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to get the video URL: %s\n", err.Error())
 		os.Exit(1)
 	}
 	recommendations, err := scrape_off_recommendations(video_url)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to find recommendations: %s\n", err.Error())
 		os.Exit(1)
 	}
 	if len(recommendations) == 0 {
@@ -50,7 +51,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err := save_recommendations_urls(recommendations); err != nil {
-		fmt.Fprintf(os.Stderr, "Failed saving found URLs.\n")
+		fmt.Fprintf(os.Stderr, "Failed to save found URLs: %s\n", err.Error())
 		os.Exit(1)
 	}
 	print_video_titles(recommendations)
@@ -90,11 +91,11 @@ func extract_videos(dataJson []byte) (videos []Video, err error) {
 
 func extract_video_from_video_renderer(renderer CompactVideoRenderer) (video Video, err error) {
 	if len(renderer.VideoId) == 0 {
-		err = errors.New("videoId is missing in videoRenderer")
+		err = fmt.Errorf("videoId is missing in videoRenderer")
 		return
 	}
 	if len(renderer.Title.SimpleText) == 0 {
-		err = errors.New("no title found for videoRenderer")
+		err = fmt.Errorf("no title found for videoRenderer")
 		return
 	}
 	video = Video{

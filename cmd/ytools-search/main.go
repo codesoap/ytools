@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/codesoap/ytools"
 	"net/url"
@@ -48,7 +47,7 @@ func main() {
 	search_url := get_search_url()
 	videos, err := scrape_off_videos(search_url)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, err.Error())
+		fmt.Fprintf(os.Stderr, "Failed to get video URLs: %s\n", err.Error())
 		os.Exit(1)
 	}
 	if len(videos) == 0 {
@@ -56,7 +55,7 @@ func main() {
 		os.Exit(1)
 	}
 	if err := save_videos_urls(videos); err != nil {
-		fmt.Fprintf(os.Stderr, "Failed saving found URLs.\n")
+		fmt.Fprintf(os.Stderr, "Failed saving found URLs: %s\n", err.Error())
 		os.Exit(1)
 	}
 	print_video_titles(videos)
@@ -109,15 +108,15 @@ func extract_videos(dataJson []byte) (videos []Video, err error) {
 
 func extract_video_from_video_renderer(renderer VideoRenderer) (video Video, err error) {
 	if len(renderer.VideoId) == 0 {
-		err = errors.New("videoId is missing in videoRenderer")
+		err = fmt.Errorf("videoId is missing in videoRenderer")
 		return
 	}
 	if len(renderer.Title.Runs) != 1 {
-		err = errors.New("multiple or no runs found for videoRenderer")
+		err = fmt.Errorf("multiple or no runs found for videoRenderer")
 		return
 	}
 	if len(renderer.Title.Runs[0].Text) == 0 {
-		err = errors.New("no title found for videoRenderer")
+		err = fmt.Errorf("no title found for videoRenderer")
 		return
 	}
 	video = Video{

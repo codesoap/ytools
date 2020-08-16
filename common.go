@@ -2,7 +2,6 @@ package ytools
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -21,7 +20,6 @@ func SaveUrls(urls []string) (err error) {
 	urls_filename := filepath.Join(data_dir, "search_results")
 	urls_file, err := os.Create(urls_filename)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Could not create URLs file.")
 		return
 	}
 	defer func() {
@@ -42,15 +40,15 @@ func GetDesiredVideoUrl() (video_url string, err error) {
 	case 1:
 		video_url, err = GetLastPickedUrl()
 	case 2:
-		selection, err := strconv.Atoi(os.Args[1])
+		var selection int
+		selection, err = strconv.Atoi(os.Args[1])
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "The given argument is no integer.")
+			return
 		}
 		video_url, err = GetSearchResult(selection - 1)
 	default:
-		fmt.Fprintf(os.Stderr, "Give a video number as argument, or no "+
-			"argument to select the last picked.\n")
-		err = fmt.Errorf("invalid argument count")
+		err = fmt.Errorf("invalid argument count; give a video number as " +
+			"argument, or no argument to select the last picked")
 	}
 	return
 }
@@ -59,7 +57,6 @@ func GetSearchResult(i int) (search_result string, err error) {
 	search_results, err := get_search_results()
 	if err == nil {
 		if i < 0 || i >= len(search_results) {
-			fmt.Fprintln(os.Stderr, "Search result index out of range.")
 			err = fmt.Errorf("invalid search result index")
 		} else {
 			search_result = search_results[i]
@@ -78,7 +75,6 @@ func get_search_results() (search_results []string, err error) {
 	urls_file := filepath.Join(data_dir, "search_results")
 	file, err := os.Open(urls_file)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not read '%s'.", urls_file)
 		return
 	}
 	defer file.Close()
@@ -103,7 +99,6 @@ func GetLastPickedUrl() (last_picked_url string, err error) {
 	last_picked_filename := filepath.Join(data_dir, "last_picked")
 	file_content, err := ioutil.ReadFile(last_picked_filename)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Could not read '%s'.", last_picked_filename)
 		return
 	}
 	last_picked_url = strings.TrimSpace(string(file_content))
@@ -117,9 +112,6 @@ func GetDataDir() (data_dir string, err error) {
 	}
 	data_dir = filepath.Join(data_dir_base, "ytools/")
 	err = os.MkdirAll(data_dir, 0755)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Failed to create directory '%s'.", data_dir)
-	}
 	return
 }
 
@@ -128,7 +120,6 @@ func GetDataDir() (data_dir string, err error) {
 func ExtractJson(url string) (mainJson []byte, err error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		err = fmt.Errorf("could not get '%s'\n", url)
 		return
 	}
 	defer resp.Body.Close()
@@ -139,7 +130,7 @@ func ExtractJson(url string) (mainJson []byte, err error) {
 	re := regexp.MustCompile(`(?m)^ *window\["ytInitialData"\] *= *(.*); *$`)
 	matches := re.FindSubmatch(bytes)
 	if matches == nil {
-		err = errors.New("retrieved HTML does not contain the expected JSON")
+		err = fmt.Errorf("retrieved HTML does not contain the expected JSON")
 		return
 	}
 	return matches[1], nil

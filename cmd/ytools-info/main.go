@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/codesoap/ytools"
 	"os"
@@ -80,11 +79,12 @@ type VideoSecondaryInfoRenderer struct {
 func main() {
 	video_url, err := ytools.GetDesiredVideoUrl()
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to get video URL: %s\n", err.Error())
 		os.Exit(1)
 	}
 	info, err := scrape_off_info(video_url)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Failed to scrape the videos page")
+		fmt.Fprintln(os.Stderr, "Failed to scrape the videos page: %s\n", err.Error())
 		os.Exit(1)
 	}
 	print_info(info)
@@ -112,7 +112,7 @@ func extract_info(dataJson []byte) (info Info, err error) {
 	}
 	r := data.Contents.TwoColumnWatchNextResults.Results.Results
 	if len(r.Contents) == 0 {
-		return info, errors.New("no contents found in JSON")
+		return info, fmt.Errorf("no contents found in JSON")
 	}
 	primaryInfo := r.Contents[0].VideoPrimaryInfoRenderer
 	secondaryInfo := r.Contents[1].VideoSecondaryInfoRenderer
@@ -135,11 +135,11 @@ func extract_info(dataJson []byte) (info Info, err error) {
 
 func fill_title(info *Info, data VideoPrimaryInfoRenderer) error {
 	if len(data.Title.Runs) != 1 {
-		return errors.New("no or multiple titles found in JSON")
+		return fmt.Errorf("no or multiple titles found in JSON")
 	}
 	info.Title = data.Title.Runs[0].Text
 	if len(info.Title) == 0 {
-		return errors.New("title is empty")
+		return fmt.Errorf("title is empty")
 	}
 	return nil
 }
@@ -147,7 +147,7 @@ func fill_title(info *Info, data VideoPrimaryInfoRenderer) error {
 func fill_views(info *Info, data VideoPrimaryInfoRenderer) error {
 	info.Views = data.ViewCount.VideoViewCountRenderer.ViewCount.SimpleText
 	if len(info.Views) == 0 {
-		return errors.New("views is empty")
+		return fmt.Errorf("views is empty")
 	}
 	return nil
 }
@@ -156,7 +156,7 @@ func fill_votes(info *Info, data VideoPrimaryInfoRenderer) error {
 	tooltip := data.SentimentBar.SentimentBarRenderer.Tooltip
 	numbers := strings.Split(tooltip, " / ")
 	if len(numbers) != 2 {
-		return errors.New("could not parse likes and dislikes")
+		return fmt.Errorf("could not parse likes and dislikes")
 	}
 	info.Likes = numbers[0]
 	info.Dislikes = numbers[1]
@@ -166,7 +166,7 @@ func fill_votes(info *Info, data VideoPrimaryInfoRenderer) error {
 func fill_date(info *Info, data VideoPrimaryInfoRenderer) error {
 	info.Date = data.DateText.SimpleText
 	if len(info.Date) == 0 {
-		return errors.New("date is empty")
+		return fmt.Errorf("date is empty")
 	}
 	return nil
 }
