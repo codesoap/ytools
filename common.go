@@ -127,7 +127,7 @@ func ExtractJson(url string) (mainJson []byte, err error) {
 	if err != nil {
 		return
 	}
-	re := regexp.MustCompile(`(?m)^.{4,12}ytInitialData.{1,3}= *(.*); *$`)
+	re := regexp.MustCompile(`(?m)ytInitialData.{1,3}= *(.*?);(</script>|$)`)
 	matches := re.FindSubmatch(bytes)
 	if matches == nil {
 		err = fmt.Errorf("retrieved HTML does not contain the expected JSON")
