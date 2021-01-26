@@ -66,7 +66,7 @@ func getSearchUrl() string {
 		fmt.Fprintf(os.Stderr, "Give one or more search terms as parameters.\n")
 		os.Exit(1)
 	}
-	searchString := url.PathEscape(strings.Join(os.Args[1:], " "))
+	searchString := url.QueryEscape(strings.Join(os.Args[1:], " "))
 	return fmt.Sprintf(
 		"https://www.youtube.com/results?search_query=%s",
 		searchString)
