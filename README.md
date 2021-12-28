@@ -9,7 +9,7 @@ $ ytools-search Black Mambo
 ...
 $ ytools-info 2
 Glass Animals - Black Mambo
-14.643.046 Views  ▲ 81.526  ▼ 1.626  Published on 17 Feb 2015
+14.643.046 Views  81.526 Likes  Published on 17 Feb 2015
 
 Our new record “How To Be a Human Being” featuring “Youth” and
 ...

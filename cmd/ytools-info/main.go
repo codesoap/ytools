@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/codesoap/ytools"
 	"os"
-	"strings"
 )
 
 type Info struct {
@@ -16,7 +15,6 @@ type Info struct {
 	// to load something like this:
 	// https://www.youtube.com/annotations_invideo?video_id=DuoTdnq_OqE
 	Likes       string
-	Dislikes    string
 	Date        string
 	Description string
 }
@@ -49,9 +47,20 @@ type VideoPrimaryInfoRenderer struct {
 			}
 		}
 	}
-	SentimentBar struct {
-		SentimentBarRenderer struct {
-			Tooltip string
+	VideoActions struct {
+		MenuRenderer struct {
+			TopLevelButtons []struct {
+				ToggleButtonRenderer struct {
+					TargetId    string
+					DefaultText struct {
+						Accessibility struct {
+							AccessibilityData struct {
+								Label string
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 	DateText struct {
@@ -92,8 +101,8 @@ func main() {
 
 func printInfo(info Info) {
 	fmt.Println(info.Title)
-	f := "%s  ▲ %s  ▼ %s  %s\n\n"
-	fmt.Printf(f, info.Views, info.Likes, info.Dislikes, info.Date)
+	f := "%s  %s  %s\n\n"
+	fmt.Printf(f, info.Views, info.Likes, info.Date)
 	fmt.Println(info.Description)
 }
 
@@ -122,7 +131,7 @@ func extractInfo(dataJson []byte) (info Info, err error) {
 	if err = fillViews(&info, primaryInfo); err != nil {
 		return
 	}
-	if err = fillVotes(&info, primaryInfo); err != nil {
+	if err = fillLikes(&info, primaryInfo); err != nil {
 		return
 	}
 	if err = fillDate(&info, primaryInfo); err != nil {
@@ -152,15 +161,14 @@ func fillViews(info *Info, data VideoPrimaryInfoRenderer) error {
 	return nil
 }
 
-func fillVotes(info *Info, data VideoPrimaryInfoRenderer) error {
-	tooltip := data.SentimentBar.SentimentBarRenderer.Tooltip
-	numbers := strings.Split(tooltip, " / ")
-	if len(numbers) != 2 {
-		return fmt.Errorf("could not parse likes and dislikes")
+func fillLikes(info *Info, data VideoPrimaryInfoRenderer) error {
+	for _, button := range data.VideoActions.MenuRenderer.TopLevelButtons {
+		if button.ToggleButtonRenderer.TargetId == "watch-like" {
+			info.Likes = button.ToggleButtonRenderer.DefaultText.Accessibility.AccessibilityData.Label
+			return nil
+		}
 	}
-	info.Likes = numbers[0]
-	info.Dislikes = numbers[1]
-	return nil
+	return fmt.Errorf("like count not found")
 }
 
 func fillDate(info *Info, data VideoPrimaryInfoRenderer) error {
