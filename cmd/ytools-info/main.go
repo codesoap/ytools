@@ -93,7 +93,7 @@ func main() {
 	}
 	info, err := scrapeOffInfo(videoUrl)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, "Failed to scrape the videos page: %s\n", err.Error())
+		fmt.Fprintln(os.Stderr, "Failed to scrape the videos page:", err.Error())
 		os.Exit(1)
 	}
 	printInfo(info)
