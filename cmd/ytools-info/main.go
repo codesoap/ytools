@@ -146,10 +146,15 @@ func extractInfo(dataJson []byte) (info Info, err error) {
 }
 
 func fillTitle(info *Info, data VideoPrimaryInfoRenderer) error {
-	if len(data.Title.Runs) != 1 {
-		return fmt.Errorf("no or multiple titles found in JSON")
+	if len(data.Title.Runs) == 0 {
+		return fmt.Errorf("no found in JSON")
 	}
-	info.Title = data.Title.Runs[0].Text
+	// There are multiple runs when the title contains hashtags.
+	// Just join the parts together.
+	info.Title = ""
+	for _, r := range data.Title.Runs {
+		info.Title += r.Text
+	}
 	if len(info.Title) == 0 {
 		return fmt.Errorf("title is empty")
 	}
