@@ -106,9 +106,14 @@ func main() {
 
 func printInfo(info Info) {
 	fmt.Println(info.Title)
-	f := "%s  %s  %s\n\n"
-	fmt.Printf(f, info.Views, info.Likes, info.Date)
-	fmt.Println(info.Description)
+	if info.Description == "" {
+		f := "%s  %s  %s\n"
+		fmt.Printf(f, info.Views, info.Likes, info.Date)
+	} else {
+		f := "%s  %s  %s\n\n"
+		fmt.Printf(f, info.Views, info.Likes, info.Date)
+		fmt.Println(info.Description)
+	}
 }
 
 func scrapeOffInfo(url string) (info Info, err error) {
