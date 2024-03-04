@@ -74,19 +74,8 @@ type VideoPrimaryInfoRenderer struct {
 }
 
 type VideoSecondaryInfoRenderer struct {
-	Owner struct {
-		VideoOwnerRenderer struct {
-			Title struct {
-				Runs []struct {
-					Text string
-				}
-			}
-		}
-	}
-	Description struct {
-		Runs []struct {
-			Text string
-		}
+	AttributedDescription struct {
+		Content string
 	}
 }
 
@@ -204,9 +193,5 @@ func fillDate(info *Info, data VideoPrimaryInfoRenderer) error {
 }
 
 func fillDescription(info *Info, data VideoSecondaryInfoRenderer) {
-	desc := []byte("")
-	for _, run := range data.Description.Runs {
-		desc = append(desc, []byte(run.Text)...)
-	}
-	info.Description = string(desc)
+	info.Description = data.AttributedDescription.Content
 }
