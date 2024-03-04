@@ -50,13 +50,15 @@ type VideoPrimaryInfoRenderer struct {
 	VideoActions struct {
 		MenuRenderer struct {
 			TopLevelButtons []struct {
-				SegmentedLikeDislikeButtonRenderer struct {
-					LikeButton struct {
-						ToggleButtonRenderer struct {
-							DefaultText struct {
-								Accessibility struct {
-									AccessibilityData struct {
-										Label string
+				SegmentedLikeDislikeButtonViewModel struct {
+					LikeButtonViewModel struct {
+						LikeButtonViewModel struct {
+							ToggleButtonViewModel struct {
+								ToggleButtonViewModel struct {
+									DefaultButtonViewModel struct {
+										ButtonViewModel struct {
+											Title string
+										}
 									}
 								}
 							}
@@ -171,10 +173,17 @@ func fillViews(info *Info, data VideoPrimaryInfoRenderer) error {
 
 func fillLikes(info *Info, data VideoPrimaryInfoRenderer) error {
 	for _, button := range data.VideoActions.MenuRenderer.TopLevelButtons {
-		info.Likes = button.SegmentedLikeDislikeButtonRenderer.LikeButton.
-			ToggleButtonRenderer.DefaultText.Accessibility.
-			AccessibilityData.Label
+		info.Likes = button.
+			SegmentedLikeDislikeButtonViewModel.
+			LikeButtonViewModel.
+			LikeButtonViewModel.
+			ToggleButtonViewModel.
+			ToggleButtonViewModel.
+			DefaultButtonViewModel.
+			ButtonViewModel.
+			Title
 		if info.Likes != "" {
+			info.Likes += " ▲"
 			return nil
 		}
 	}
