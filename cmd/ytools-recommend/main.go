@@ -20,7 +20,7 @@ type YtInitialData struct {
 			SecondaryResults struct {
 				SecondaryResults struct {
 					Results []struct {
-						CompactVideoRenderer CompactVideoRenderer
+						LockupViewModel LockupViewModel
 					}
 				}
 			}
@@ -28,10 +28,14 @@ type YtInitialData struct {
 	}
 }
 
-type CompactVideoRenderer struct {
-	VideoId string
-	Title   struct {
-		SimpleText string
+type LockupViewModel struct {
+	ContentID string
+	Metadata  struct {
+		LockupMetadataViewModel struct {
+			Title struct {
+				Content string
+			}
+		}
 	}
 }
 
@@ -75,7 +79,7 @@ func extractVideos(dataJson []byte) (videos []Video, err error) {
 	sr := data.Contents.TwoColumnWatchNextResults.SecondaryResults
 	for _, result := range sr.SecondaryResults.Results {
 		var video Video
-		video, err = extractVideoFromVideoRenderer(result.CompactVideoRenderer)
+		video, err = extractVideoFromVideoModel(result.LockupViewModel)
 		if err != nil {
 			// This sometimes happens, but I don't think it's problematic.
 			err = nil
@@ -89,18 +93,18 @@ func extractVideos(dataJson []byte) (videos []Video, err error) {
 	return
 }
 
-func extractVideoFromVideoRenderer(renderer CompactVideoRenderer) (video Video, err error) {
-	if len(renderer.VideoId) == 0 {
-		err = fmt.Errorf("videoId is missing in videoRenderer")
+func extractVideoFromVideoModel(Model LockupViewModel) (video Video, err error) {
+	if len(Model.ContentID) == 0 {
+		err = fmt.Errorf("contentId is missing in lockupViewModel")
 		return
 	}
-	if len(renderer.Title.SimpleText) == 0 {
-		err = fmt.Errorf("no title found for videoRenderer")
+	if len(Model.Metadata.LockupMetadataViewModel.Title.Content) == 0 {
+		err = fmt.Errorf("no title found for lockupViewModel")
 		return
 	}
 	video = Video{
-		Url:   fmt.Sprintf("https://www.youtube.com/watch?v=%s", renderer.VideoId),
-		Title: renderer.Title.SimpleText,
+		Url:   fmt.Sprintf("https://www.youtube.com/watch?v=%s", Model.ContentID),
+		Title: Model.Metadata.LockupMetadataViewModel.Title.Content,
 	}
 	return
 }
